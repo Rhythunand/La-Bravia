@@ -1,15 +1,11 @@
 <!DOCTYPE html>
-<html
-  lang="en"
-  class="scroll-smooth"
-  x-data="laBraviaApp()"
-  x-init="initTheme()"
-  :class="{ 'dark': darkMode }"
->
+<html lang="en" class="scroll-smooth" x-data="laBraviaApp()" :class="{ 'dark': darkMode }">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
     <title>La Bravia | Haute Parfumerie</title>
+    <meta name="description" content="La Bravia: A sanctuary of rare olfactory compositions. Discover artisanal fragrances crafted with poetic restraint and timeless elegance. Founded by Aijaz & Rhythunand.">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,30 +16,35 @@
 
     <script>
         tailwind.config = {
-          darkMode: 'class',
-          theme: {
-            extend: {
-              colors: {
-                luxury: {
-                  gold: '#C5A059',
-                  dark: '#0A0A0A',
-                  paper: '#FDFDFB',
-                  stone: '#727272',
-                  canvas: '#F5F2ED'
-                },
-                nocturne: {
-                  paper: '#0E0E0E',
-                  canvas: '#141414',
-                  border: '#1F1F1F',
-                  text: '#E5E5E5',
-                  muted: '#9CA3AF'
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        luxury: {
+                            gold: '#C5A059',
+                            dark: '#0A0A0A',
+                            paper: '#FDFDFB',
+                            stone: '#727272',
+                            canvas: '#F5F2ED',
+                            // Custom Dark Mode Tones (intentional, not inverted)
+                            night: '#0F0F0F',      /* Base bg */
+                            obsidian: '#161616',   /* Secondary bg */
+                            shadow: '#1C1C1C'      /* Border / Contrast */
+                        }
+                    },
+                    fontFamily: {
+                        display: ['Cinzel', 'serif'],
+                        serif: ['Cormorant Garamond', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    letterSpacing: {
+                        luxury: '0.3em',
+                        hero: '0.5em',
+                    }
                 }
-              }
             }
-          }
         }
     </script>
-
 
     <style>
         [x-cloak] { display: none !important; }
@@ -51,387 +52,246 @@
         body {
             -webkit-font-smoothing: antialiased;
             text-rendering: optimizeLegibility;
-            background-color: #FDFDFB;
+            /* Subtly animate theme transitions */
+            transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1), color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Motion Discipline: Confident and Slow */
-        .reveal {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 1.4s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .no-scroll { overflow: hidden !important; height: 100vh !important; }
 
-        /* Product Image Hover - Restrained scale */
-        .img-zoom-container {
-            overflow: hidden;
-            background-color: #F5F2ED;
-        }
-        .img-zoom-container img {
-            transition: transform 2.5s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-        .group:hover .img-zoom-container img {
-            transform: scale(1.04);
-        }
-
-        /* Smooth Scrollbar */
-        @media (min-width: 1024px) {
-            ::-webkit-scrollbar { width: 4px; }
-            ::-webkit-scrollbar-track { background: #FDFDFB; }
-            ::-webkit-scrollbar-thumb { background: #C5A059; }
-        }
-
-        /* Mobile Safe Areas */
-        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
-        
-        /* Hero text reveal */
         .reveal-text {
-            animation: text-reveal 2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+            animation: text-reveal 2.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+            opacity: 0;
         }
         @keyframes text-reveal {
-            0% { opacity: 0; transform: translateY(15px); filter: blur(4px); }
+            0% { opacity: 0; transform: translateY(20px); filter: blur(5px); }
             100% { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
-        /* Interactive Underline */
-        .nav-link {
-            position: relative;
+        /* Focus state for the toggle */
+        .theme-toggle:focus-visible {
+            outline: 1px solid #C5A059;
+            outline-offset: 4px;
         }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: #C5A059;
-            transition: width 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-        .nav-link:hover::after { width: 100%; }
+
+      .nav-link {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+        width: 0;
+        height: 1px;
+        background: rgb(197 160 89 / 60%);
+        transition: width 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+    
+    .nav-link:hover::after {
+        width: 100%;
+    }
+    
+    .dark .nav-link::after {
+        background: rgb(197 160 89 / 85%);
+    }
+
     </style>
 </head>
-<body class="text-luxury-dark dark:text-nocturne-text
-             bg-luxury-paper dark:bg-nocturne-paper
-             selection:bg-luxury-gold/20 selection:text-luxury-dark
-             transition-colors duration-500">
+<body class="bg-luxury-paper dark:bg-luxury-night text-luxury-dark dark:text-gray-200 selection:bg-luxury-gold/20">
 
-    <nav class="fixed w-full z-[100] transition-all duration-1000"
-         :class="scrolled
-          ? 'bg-white/90 dark:bg-black/80 backdrop-blur-md py-4 border-b border-gray-100 dark:border-nocturne-border'
-          : 'bg-transparent py-8'">
-
-        <div class="max-w-[1600px] mx-auto px-8 md:px-12 flex justify-between items-center">
-            
-            <a href="#" class="text-xl md:text-2xl font-display tracking-hero uppercase leading-none transition-opacity hover:opacity-70">
-                La Bravia
-            </a>
-            
-            <div class="hidden md:flex space-x-14 text-[10px] uppercase tracking-luxury font-medium">
-                <a href="#collection" class="class="nav-link inline-block";">Collection</a>
-                <a href="#about" class="class="nav-link inline-block";">The Maison</a>
-                <a href="#contact" class="class="nav-link inline-block";">Concierge</a>
-            </div>
-
-            <button
-              @click="toggleTheme()"
-              aria-label="Toggle theme"
-              class="ml-4 w-10 h-10
-                     flex items-center justify-center
-                     rounded-full
-                     hover:bg-black/5 dark:hover:bg-white/10
-                     transition">
-            
-              <span class="relative w-5 h-5">
-                <!-- Sun -->
-                <svg
-                  x-show="!darkMode"
-                  x-transition.opacity
-                  class="absolute inset-0"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5">
-                  <circle cx="12" cy="12" r="4"/>
-                  <path d="M12 2v2M12 20v2M2 12h2M20 12h2"/>
-                </svg>
-            
-                <!-- Moon -->
-                <svg
-                  x-show="darkMode"
-                  x-cloak
-                  x-transition.opacity
-                  class="absolute inset-0"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5">
-                  <path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/>
-                </svg>
-              </span>
-            </button>
-
-
-            <button @click="mobileMenu = true" class="md:hidden flex flex-col space-y-2 p-2 focus:outline-none">
-                <span class="w-6 h-[1px] bg-current"></span>
-                <span class="w-4 h-[1px] bg-current self-end"></span>
-            </button>
-        </div>
-
-        <div x-show="mobileMenu" 
-             x-transition:enter="transition ease-out duration-700"
-             x-transition:enter-start="opacity-0 translate-x-full"
-             x-transition:enter-end="opacity-100 translate-x-0"
-             x-transition:leave="transition ease-in duration-500"
-             x-transition:leave-end="opacity-0 translate-x-full"
-             x-cloak 
-             class="fixed inset-0 bg-luxury-dark text-white z-[110] flex flex-col p-12 overflow-hidden">
-            <button @click="mobileMenu = false" class="absolute top-10 right-10 focus:outline-none opacity-60 hover:opacity-100 transition-opacity">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-                    <path d="M18 6L6 18M6 6l12 12"/>
-                </svg>
-            </button>
-            <div class="mt-24 space-y-10">
-                <p class="text-[9px] tracking-luxury text-luxury-gold uppercase italic">Selection</p>
-                <a @click="mobileMenu = false" href="#collection" class="block text-4xl font-display uppercase tracking-widest">Collection</a>
-                <a @click="mobileMenu = false" href="#about" class="block text-4xl font-display uppercase tracking-widest">The Maison</a>
-                <a @click="mobileMenu = false" href="#contact" class="block text-4xl font-display uppercase tracking-widest">Concierge</a>
-            </div>
-            <div class="mt-auto pt-10 border-t border-white/10 flex flex-col gap-4">
-                <p class="text-[10px] tracking-luxury opacity-40 uppercase">La Bravia &copy; 2026</p>
-                <p class="text-[10px] tracking-luxury opacity-40 uppercase">Founded by Aijaz & Rhythunand</p>
-            </div>
-        </div>
-    </nav>
-
-    <section class="relative h-[100svh] flex items-center justify-center overflow-hidden bg-luxury-dark">
-        <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=90" 
-                 alt="Luxury Still Life" 
-                 class="w-full h-full object-cover opacity-40 scale-105 animate-[pulse_10s_infinite]">
-        </div>
-        
-        <div class="relative z-10 text-center px-8">
-            <h2 class="text-[10px] md:text-xs uppercase tracking-[0.7em] mb-8 text-luxury-gold reveal-text" style="animation-delay: 0.3s">
-                A Symphony of Rarity
-            </h2>
-            <h1 class="text-5xl md:text-9xl font-display mb-12 text-white tracking-hero leading-none reveal-text" style="animation-delay: 0.6s">
-                LA BRAVIA
-            </h1>
-            <p class="text-base md:text-xl font-serif italic text-white/70 mb-16 max-w-xl mx-auto leading-relaxed reveal-text" style="animation-delay: 0.9s">
-                Refined olfactory portraits, hand-poured for those who navigate the world with quiet confidence.
-            </p>
-            <div class="flex flex-col md:flex-row gap-8 justify-center items-center reveal-text" style="animation-delay: 1.2s">
-                <a href="#collection" class="min-w-[220px] px-10 py-6 bg-white text-luxury-dark uppercase text-[10px] tracking-luxury font-bold hover:bg-luxury-gold hover:text-white transition-all duration-700">
-                    The Collection
+    <header>
+        <nav class="fixed w-full z-[100] transition-all duration-1000"
+             :class="scrolled ? 'bg-white/90 dark:bg-luxury-night/90 backdrop-blur-md py-4 border-b border-gray-100 dark:border-white/5' : 'bg-transparent py-6 md:py-8'"
+             role="navigation" aria-label="Main Navigation">
+            <div class="max-w-[1600px] mx-auto px-6 md:px-12 flex justify-between items-center">
+                
+                <a href="#" class="text-lg md:text-2xl font-display tracking-hero uppercase transition-opacity hover:opacity-70 focus-visible:outline-none" aria-label="La Bravia Home">
+                    La Bravia
                 </a>
-            </div>
-        </div>
-        
-        <div class="absolute bottom-12 left-1/2 -translate-x-1/2 hidden md:block opacity-20">
-            <div class="w-[1px] h-20 bg-gradient-to-b from-white to-transparent"></div>
-        </div>
-    </section>
-
-    <section id="collection" class="py-40 px-8 md:px-12 max-w-[1600px] mx-auto">
-        <header class="flex flex-col md:flex-row md:items-end justify-between mb-32 gap-12">
-            <div class="max-w-2xl">
-                <span class="text-[10px] uppercase tracking-luxury text-luxury-gold mb-6 block">Current Editions</span>
-                <h3 class="font-display text-4xl md:text-6xl mb-8 leading-editorial uppercase tracking-tighter">
-                    Signature <br><span class="italic font-serif normal-case text-luxury-gold opacity-90">Olfactory Compositions</span>
-                </h3>
-                <p class="text-luxury-stone font-serif text-xl leading-relaxed max-w-lg italic">
-                    Each flacon holds a story of provenance, ranging from hand-picked Grasse petals to aged Mysore sandalwood.
-                </p>
-            </div>
-        </header>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-32">
-            <template x-for="product in products" :key="product.id">
-                <div class="group cursor-pointer" @click="openProduct(product)">
-                    <div class="img-zoom-container aspect-[3/4] mb-10 relative shadow-sm">
-                        <img :src="product.image" :alt="product.name" class="w-full h-full object-cover mix-blend-multiply">
-                        <div class="absolute inset-0 bg-luxury-dark/0 group-hover:bg-luxury-dark/5 transition-colors duration-1000"></div>
-                        <div class="absolute bottom-10 left-0 right-0 text-center opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-700">
-                            <span class="text-[9px] uppercase tracking-luxury text-luxury-dark bg-white/90 backdrop-blur px-8 py-4 shadow-sm font-bold">Inquire & Explore</span>
-                        </div>
+                
+                <div class="flex items-center space-x-8 md:space-x-14">
+                    <div class="hidden md:flex space-x-14 text-[10px] uppercase tracking-luxury font-medium">
+                        <a href="#collection" class="nav-link hover:text-luxury-gold transition-colors duration-500">Collection</a>
+                        <a href="#about" class="nav-link hover:text-luxury-gold transition-colors duration-500">The Maison</a>
+                        <a href="#contact" class="nav-link hover:text-luxury-gold transition-colors duration-500">Concierge</a>
                     </div>
-                    <div class="space-y-3 px-2">
-                        <div class="flex justify-between items-baseline">
-                            <h4 class="font-display text-2xl tracking-wide uppercase" x-text="product.name"></h4>
-                            <p class="text-luxury-stone font-serif text-lg italic" x-text="'€' + product.price"></p>
-                        </div>
-                        <p class="text-[10px] uppercase tracking-luxury text-luxury-gold" x-text="product.category"></p>
-                    </div>
-                </div>
-            </template>
-        </div>
-    </section>
 
-    <section id="about"
-  class="bg-luxury-canvas dark:bg-nocturne-canvas
-         py-40 px-8 md:px-12
-         border-y border-gray-100 dark:border-nocturne-border">
-        <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-20 items-center">
-            <div class="lg:col-span-5 space-y-10 order-2 lg:order-1">
-                <span class="text-[10px] uppercase tracking-luxury text-luxury-gold font-bold">The Heritage</span>
-                <h3 class="font-display text-4xl md:text-6xl leading-editorial uppercase tracking-tighter">
-                    Crafting <br> <span class="italic font-serif text-luxury-stone normal-case">Presence</span>
-                </h3>
-                <div class="w-16 h-[1px] bg-luxury-gold/50"></div>
-                <p class="font-serif text-xl md:text-2xl leading-relaxed text-luxury-dark/70 italic">
-                    "We do not seek to mask, but to reveal. Our fragrances are the invisible ink with which you write your legacy."
-                </p>
-                <p class="text-luxury-stone leading-relaxed text-base font-light max-w-md">
-                    Rooted in the pursuit of absolute quality, La Bravia maintains a private laboratory where time is our most precious ingredient. We embrace the friction between ancient alchemy and modern molecular precision.
-                </p>
-                <div class="pt-6">
-                    <span class="font-display text-xs tracking-luxury uppercase">La Bravia Maison</span>
-                    <span class="block text-[9px] text-luxury-gold uppercase tracking-[0.3em] mt-2">Paris • London • Dubai</span>
-                </div>
-            </div>
-            <div class="lg:col-span-7 order-1 lg:order-2">
-                <div class="aspect-[16/11] overflow-hidden grayscale-[0.2] shadow-2xl">
-                    <img src="https://unsplash.com/photos/several-bottles-of-cologne-sitting-on-a-shelf-hWZCczs66jQ?auto=format&fit=crop&q=90" 
-                         alt="Perfumer Lab" 
-                         class="w-full h-full object-cover scale-100 hover:scale-105 transition-transform duration-[3s] ease-out">
-                </div>
-            </div>
-        </div>
-    </section>
+                    <button @click="toggleTheme()" 
+                            class="theme-toggle p-2 rounded-full transition-colors duration-500 hover:bg-black/5 dark:hover:bg-white/5"
+                            :aria-label="darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+                        <svg x-show="darkMode" x-cloak class="w-4 h-4 text-luxury-gold" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" />
+                        </svg>
+                        <svg x-show="!darkMode" class="w-4 h-4 text-luxury-dark" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                        </svg>
+                    </button>
 
-    <section id="contact"
-  class="py-40
-         bg-luxury-paper dark:bg-nocturne-paper">
-
-        <div class="max-w-3xl mx-auto px-8">
-            <div class="text-center mb-24">
-                <span class="text-[10px] uppercase tracking-luxury text-luxury-gold font-bold block mb-6">Concierge</span>
-                <h3 class="font-display text-4xl md:text-5xl uppercase tracking-widest mb-8">Personal Inquiry</h3>
-                <p class="font-serif text-lg text-luxury-stone italic max-w-lg mx-auto">Allow us to assist you in discovering your signature edition or coordinating a bespoke commission.</p>
-            </div>
-            
-            <form class="space-y-16" @submit.prevent>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
-                    <div class="relative group">
-                        <input type="text" id="name" required placeholder=" " class="w-full bg-transparent border-b border-gray-200 py-4 focus:border-luxury-gold outline-none transition-all duration-700 peer">
-                        <label for="name" class="absolute left-0 top-4 text-[9px] uppercase tracking-luxury text-luxury-stone transition-all duration-500 peer-focus:-top-6 peer-focus:text-luxury-gold peer-[:not(:placeholder-shown)]:-top-6">Full Name</label>
-                    </div>
-                    <div class="relative group">
-                        <input type="email" id="email" required placeholder=" " class="w-full bg-transparent border-b border-gray-200 py-4 focus:border-luxury-gold outline-none transition-all duration-700 peer">
-                        <label for="email" class="absolute left-0 top-4 text-[9px] uppercase tracking-luxury text-luxury-stone transition-all duration-500 peer-focus:-top-6 peer-focus:text-luxury-gold peer-[:not(:placeholder-shown)]:-top-6">Email Address</label>
-                    </div>
-                </div>
-                <div class="relative">
-                    <textarea rows="3" id="msg" required placeholder=" " class="w-full bg-transparent border-b border-gray-200 py-4 focus:border-luxury-gold outline-none transition-all duration-700 peer resize-none"></textarea>
-                    <label for="msg" class="absolute left-0 top-4 text-[9px] uppercase tracking-luxury text-luxury-stone transition-all duration-500 peer-focus:-top-6 peer-focus:text-luxury-gold peer-[:not(:placeholder-shown)]:-top-6">Your Inquiry</label>
-                </div>
-                <div class="text-center pt-8">
-                    <button class="px-20 py-6 bg-luxury-dark text-white uppercase text-[10px] tracking-luxury font-bold hover:bg-luxury-gold transition-all duration-700 shadow-lg">
-                        Send Message
+                    <button @click="openMenu()" class="md:hidden flex flex-col space-y-1.5 p-2" aria-label="Open Menu">
+                        <span class="w-6 h-[1px] bg-current"></span>
+                        <span class="w-4 h-[1px] bg-current self-end"></span>
                     </button>
                 </div>
-            </form>
-        </div>
-    </section>
+            </div>
+        </nav>
+    </header>
 
-    <footer class="bg-luxury-dark text-white pt-32 pb-16 px-8 md:px-12">
-        <div class="max-w-[1600px] mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-20 items-center mb-32">
-                <div class="order-2 md:order-1 flex space-x-10 text-[9px] uppercase tracking-luxury font-medium text-white/60">
-                    <a href="#" class="hover:text-luxury-gold transition duration-500">Instagram</a>
-                    <a href="#" class="hover:text-luxury-gold transition duration-500">Journal</a>
-                    <a href="#" class="hover:text-luxury-gold transition duration-500">Stockists</a>
+    <main>
+        <section class="relative h-[100svh] flex items-center justify-center overflow-hidden bg-luxury-dark">
+            <div class="absolute inset-0 z-0">
+                <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=2000" 
+                     alt="Cinematic luxury perfume bottle" 
+                     class="w-full h-full object-cover opacity-40 scale-105 animate-[pulse_12s_infinite]"
+                     decoding="async">
+            </div>
+            
+            <div class="relative z-10 text-center px-6">
+                <h2 class="text-[9px] md:text-xs uppercase tracking-[0.5em] mb-6 text-luxury-gold reveal-text" style="animation-delay: 0.4s">
+                    The Architecture of Scent
+                </h2>
+                <h1 class="text-5xl md:text-9xl font-display mb-8 text-white tracking-hero leading-none reveal-text" style="animation-delay: 0.8s">
+                    LA BRAVIA
+                </h1>
+                <p class="text-sm md:text-xl font-serif italic text-white/70 mb-12 max-w-sm md:max-w-xl mx-auto reveal-text" style="animation-delay: 1.2s">
+                    Hand-poured olfactory portraits. Silence is the ultimate luxury.
+                </p>
+                <div class="reveal-text" style="animation-delay: 1.6s">
+                    <a href="#collection" class="inline-block px-10 py-5 bg-white text-luxury-dark uppercase text-[10px] tracking-luxury font-bold hover:bg-luxury-gold hover:text-white transition-all duration-700">
+                        Explore Collection
+                    </a>
                 </div>
-                
-                <div class="order-1 md:order-2 text-center">
-                    <div class="text-3xl font-display tracking-hero uppercase mb-3">LA BRAVIA</div>
-                    <div class="text-[8px] uppercase tracking-[0.5em] text-luxury-gold/80">Haute Parfumerie</div>
+            </div>
+        </section>
+
+        <section id="collection" class="py-20 md:py-40 px-6 md:px-12 max-w-[1600px] mx-auto">
+            <header class="mb-16 md:mb-32">
+                <span class="text-[9px] uppercase tracking-luxury text-luxury-gold mb-4 block">Current Editions</span>
+                <h3 class="font-display text-3xl md:text-6xl mb-6 uppercase tracking-tighter">
+                    Signature <span class="italic font-serif normal-case text-luxury-gold">Compositions</span>
+                </h3>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-16 md:gap-y-32">
+                <template x-for="product in products" :key="product.id">
+                    <article class="group cursor-pointer" @click="openProduct(product)">
+                        <div class="img-zoom-container aspect-[3/4] mb-6 relative bg-luxury-canvas dark:bg-luxury-obsidian">
+                            <img :src="product.image" 
+                                 :alt="product.name" 
+                                 class="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal dark:opacity-80" 
+                                 loading="lazy">
+                            <div class="absolute inset-0 bg-luxury-dark/0 group-hover:bg-luxury-dark/5 transition-colors duration-1000"></div>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-display text-xl md:text-2xl tracking-wide uppercase" x-text="product.name"></h4>
+                                <p class="text-[9px] uppercase tracking-luxury text-luxury-gold mt-1" x-text="product.category"></p>
+                            </div>
+                            <p class="text-luxury-stone dark:text-gray-400 font-serif text-base italic" x-text="'€' + product.price"></p>
+                        </div>
+                    </article>
+                </template>
+            </div>
+        </section>
+
+        <section id="about" class="bg-luxury-canvas dark:bg-luxury-obsidian py-20 md:py-40 px-6 md:px-12 border-y border-gray-100 dark:border-white/5">
+            <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-5 space-y-6 md:space-y-10 order-2 lg:order-1">
+                    <span class="text-[9px] uppercase tracking-luxury text-luxury-gold font-bold">The Heritage</span>
+                    <h3 class="font-display text-3xl md:text-5xl uppercase tracking-tighter">
+                        Crafting <span class="italic font-serif text-luxury-stone dark:text-gray-400 normal-case">Permanence</span>
+                    </h3>
+                    <p class="font-serif text-lg md:text-2xl italic text-luxury-dark/70 dark:text-white/60">
+                        "We do not create for the season. We create for the memory."
+                    </p>
+                    <p class="text-luxury-stone dark:text-gray-400 text-sm md:text-base font-light max-w-md">
+                        La Bravia bridge ancient extraction techniques with modern architecture.
+                    </p>
+                    <div class="pt-4">
+                        <span class="font-display text-[10px] tracking-luxury uppercase">Founding Vision</span>
+                        <span class="block text-[8px] text-luxury-gold uppercase tracking-[0.3em] mt-2">Aijaz & Rhythunand</span>
+                    </div>
                 </div>
-                
-                <div class="order-3 text-right hidden md:block">
-                    <div class="text-[9px] uppercase tracking-luxury text-white/40 leading-loose">
-                        Founded by Aijaz & Rhythunand <br> 
-                        Paris • London
+                <div class="lg:col-span-7 order-1 lg:order-2">
+                    <div class="aspect-[16/10] overflow-hidden shadow-xl dark:opacity-80">
+                        <img src="https://images.unsplash.com/photo-1547671027-4fcf4a58da95?auto=format&fit=crop&q=80&w=1400" 
+                             alt="Laboratory tools" class="w-full h-full object-cover" loading="lazy">
                     </div>
                 </div>
             </div>
-            
-            <div class="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-6">
-                <p class="text-[8px] uppercase tracking-widest text-white/20">&copy; 2026 La Bravia. All Rights Reserved.</p>
-                <p class="md:hidden text-[8px] uppercase tracking-widest text-white/20">Founded by Aijaz & Rhythunand</p>
-            </div>
-        </div>
-    </footer>
+        </section>
 
-    <div class="md:hidden fixed bottom-0 left-0 right-0 p-6 z-[90] pointer-events-none"
-         x-show="scrolled"
-         x-transition:enter="transition ease-out duration-700"
-         x-transition:enter-start="translate-y-full opacity-0"
-         x-transition:enter-end="translate-y-0 opacity-100"
-         x-transition:leave="transition ease-in duration-500"
-         x-transition:leave-end="translate-y-full opacity-0">
-        <a href="#collection" class="pointer-events-auto block w-full py-5 bg-luxury-dark/95 backdrop-blur-md text-white text-center text-[10px] uppercase tracking-hero font-bold shadow-2xl pb-safe">
-            The Collection
-        </a>
-    </div>
+        <section id="contact" class="py-20 md:py-40 bg-luxury-paper dark:bg-luxury-night">
+            <div class="max-w-3xl mx-auto px-6">
+                <div class="text-center mb-16">
+                    <span class="text-[9px] uppercase tracking-luxury text-luxury-gold font-bold block mb-4">Concierge</span>
+                    <h3 class="font-display text-3xl uppercase tracking-widest mb-6">Personal Inquiry</h3>
+                </div>
+                
+                <form class="space-y-12" @submit.prevent>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        <div class="relative">
+                            <input type="text" id="name" required placeholder=" " class="w-full bg-transparent border-b border-gray-200 dark:border-white/10 py-4 focus:border-luxury-gold outline-none transition-all duration-700 peer">
+                            <label for="name" class="absolute left-0 top-4 text-[9px] uppercase tracking-luxury text-luxury-stone transition-all duration-500 peer-focus:-top-6 peer-focus:text-luxury-gold peer-[:not(:placeholder-shown)]:-top-6">Name</label>
+                        </div>
+                        <div class="relative">
+                            <input type="email" id="email" required placeholder=" " class="w-full bg-transparent border-b border-gray-200 dark:border-white/10 py-4 focus:border-luxury-gold outline-none transition-all duration-700 peer">
+                            <label for="email" class="absolute left-0 top-4 text-[9px] uppercase tracking-luxury text-luxury-stone transition-all duration-500 peer-focus:-top-6 peer-focus:text-luxury-gold peer-[:not(:placeholder-shown)]:-top-6">Email</label>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button class="w-full md:w-auto px-20 py-5 bg-luxury-dark dark:bg-luxury-gold dark:text-white text-white uppercase text-[10px] tracking-luxury font-bold transition-all duration-700">
+                            Send Inquiry
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
 
     <div x-show="isModalOpen" 
-         x-transition:enter="transition ease-out duration-600"
+         x-transition:enter="transition ease-out duration-500"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-400"
-         x-transition:leave-end="opacity-0"
          class="fixed inset-0 z-[200] overflow-y-auto" x-cloak>
         
-        <div class="flex items-center justify-center min-h-screen p-0 lg:p-16">
+        <div class="flex items-end md:items-center justify-center min-h-screen md:p-12">
             <div class="fixed inset-0 bg-luxury-dark/95 backdrop-blur-sm" @click="closeProduct()"></div>
 
-            <div class="relative bg-white dark:bg-nocturne-canvas
-            text-luxury-dark dark:text-nocturne-text
-            max-w-6xl w-full grid lg:grid-cols-2 ...">
-                
-                <button @click="closeProduct()" class="absolute top-8 right-8 text-luxury-dark z-[210] p-2 hover:rotate-90 transition-transform duration-700">
+            <article class="relative bg-white dark:bg-luxury-obsidian max-w-6xl w-full grid md:grid-cols-2 overflow-hidden shadow-2xl h-[90vh] md:h-auto rounded-t-3xl md:rounded-none">
+                <button @click="closeProduct()" class="absolute top-6 right-6 text-luxury-dark dark:text-white z-[210] p-3" aria-label="Close">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="12"></line>
+                        <path d="M18 6L6 18M6 6l12 12"/>
                     </svg>
                 </button>
                 
-                <div class="bg-luxury-canvas relative flex items-center justify-center h-[50svh] lg:h-auto overflow-hidden">
+                <div class="bg-luxury-canvas dark:bg-luxury-shadow h-[35vh] md:h-auto overflow-hidden">
                     <img :src="selectedProduct?.image" 
-                         class="w-full h-full object-cover mix-blend-multiply transition duration-[3s]"
-                         :class="isModalOpen ? 'scale-100' : 'scale-110'">
+                         class="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal">
                 </div>
                 
-                <div class="p-10 lg:p-24 flex flex-col justify-center bg-white">
-                    <header class="mb-12">
-                        <span class="text-[9px] uppercase tracking-luxury text-luxury-gold font-bold mb-6 block" x-text="selectedProduct?.category"></span>
-                        <h2 class="font-display text-4xl md:text-5xl mb-6 leading-editorial tracking-tighter uppercase" x-text="selectedProduct?.name"></h2>
-                        <p class="text-luxury-stone text-2xl font-serif italic" x-text="'€' + selectedProduct?.price"></p>
+                <div class="p-8 md:p-20 flex flex-col bg-white dark:bg-luxury-obsidian">
+                    <header class="mb-8">
+                        <span class="text-[8px] uppercase tracking-luxury text-luxury-gold font-bold mb-3 block" x-text="selectedProduct?.category"></span>
+                        <h2 class="font-display text-3xl uppercase tracking-tight" x-text="selectedProduct?.name"></h2>
+                        <p class="text-luxury-stone dark:text-luxury-gold/80 text-xl font-serif italic mt-2" x-text="'€' + selectedProduct?.price"></p>
                     </header>
                     
-                    <div class="space-y-12">
-                        <section>
-                            <h5 class="uppercase text-[8px] tracking-[0.3em] text-luxury-stone/60 mb-6 border-b border-gray-100 pb-3">The Narrative</h5>
-                            <p class="text-luxury-dark/80 font-serif text-xl leading-relaxed italic" x-text="selectedProduct?.description"></p>
-                        </section>
-                        
-                        <section>
-                            <h5 class="uppercase text-[8px] tracking-[0.3em] text-luxury-stone/60 mb-6 border-b border-gray-100 pb-3">Composition</h5>
-                            <p class="text-[11px] font-medium tracking-widest text-luxury-dark leading-loose uppercase" x-text="selectedProduct?.notes"></p>
-                        </section>
+                    <div class="space-y-8">
+                        <div>
+                            <h5 class="uppercase text-[8px] tracking-[0.3em] text-luxury-stone dark:text-white/20 mb-3 border-b dark:border-white/5 pb-2">Narrative</h5>
+                            <p class="text-luxury-dark/80 dark:text-white/70 font-serif text-base italic leading-relaxed" x-text="selectedProduct?.description"></p>
+                        </div>
                     </div>
 
-                    <div class="mt-16">
-                        <button class="w-full py-6 bg-luxury-dark text-white uppercase text-[10px] tracking-luxury font-bold hover:bg-luxury-gold transition duration-700">
-                            Concierge Request
+                    <div class="mt-auto pt-10">
+                        <button class="w-full py-5 bg-luxury-dark dark:bg-white dark:text-luxury-dark text-white uppercase text-[10px] tracking-luxury font-bold transition duration-700">
+                            Concierge Inquire
                         </button>
                     </div>
                 </div>
-            </div>
+            </article>
         </div>
     </div>
 
@@ -442,71 +302,32 @@
                 mobileMenu: false,
                 isModalOpen: false,
                 selectedProduct: null,
-                products: [
-                    {
-                        id: 1,
-                        name: "Noir Éclat",
-                        category: "Oriental / Intense",
-                        price: "285.00",
-                        description: "A nocturnal masterpiece defined by the tension between rare Indonesian Oud and the velvet warmth of spiced Cardamom. It is a scent for the confident shadow.",
-                        notes: "Saffron, Black Pepper, Oud Accord, Cured Leather, Amberwood.",
-                        image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=90"
-                    },
-                    {
-                        id: 2,
-                        name: "Azure Bloom",
-                        category: "Floral / Solar",
-                        price: "195.00",
-                        description: "Capturing the fleeting moment of dawn in a Mediterranean garden. Light, crystalline, and effortlessly sophisticated with a heart of crushed petals.",
-                        notes: "Calabrian Bergamot, Neroli, Sea Salt, Egyptian Jasmine, White Musk.",
-                        image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=90"
-                    },
-                    {
-                        id: 3,
-                        name: "Imperial Or",
-                        category: "Gourmand / Amber",
-                        price: "340.00",
-                        description: "The height of luxury. A radiant composition that mimics the feeling of liquid gold against the skin. Warm, enveloping, and eternally memorable.",
-                        notes: "Mandarin Peel, Vanilla Orchid, Roasted Tonka, Sandalwood, Patchouli.",
-                        image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&q=90"
-                    }
-                ],
+                // Dark Mode State with LocalStorage Persistence
+                darkMode: localStorage.getItem('theme') === 'dark' || 
+                         (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches),
 
-                darkMode: false,
-                initTheme() {
-                  const saved = localStorage.getItem('laBraviaTheme')
-                  if (saved) {
-                    this.darkMode = saved === 'dark'
-                  } else {
-                    this.darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
-                  }
+                init() {
+                    window.addEventListener('scroll', () => {
+                        this.scrolled = window.pageYOffset > 50;
+                    });
                 },
-                
+
                 toggleTheme() {
-                  this.darkMode = !this.darkMode
-                  localStorage.setItem(
-                    'laBraviaTheme',
-                    this.darkMode ? 'dark' : 'light'
-                  )
+                    this.darkMode = !this.darkMode;
+                    localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
                 },
-                openProduct(product) {
-                    this.selectedProduct = product;
-                    this.isModalOpen = true;
-                    document.body.style.overflow = 'hidden';
-                },
-                closeProduct() {
-                    this.isModalOpen = false;
-                    setTimeout(() => {
-                        document.body.style.overflow = '';
-                    }, 400);
-                }
+
+                products: [
+                    { id: 1, name: "Noir Éclat", category: "Oriental / Intense", price: "285.00", description: "Rare Indonesian Oud and spiced Cardamom.", image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=1000" },
+                    { id: 2, name: "Azure Bloom", category: "Floral / Solar", price: "195.00", description: "Mediterranean garden dawn. Neroli and Jasmine.", image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1000" },
+                    { id: 3, name: "Imperial Or", category: "Gourmand / Amber", price: "340.00", description: "Radiant liquid gold. Vanilla Orchid and Sandalwood.", image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&q=80&w=1000" }
+                ],
+                openMenu() { this.mobileMenu = true; document.body.classList.add('no-scroll'); },
+                closeMenu() { this.mobileMenu = false; document.body.classList.remove('no-scroll'); },
+                openProduct(product) { this.selectedProduct = product; this.isModalOpen = true; document.body.classList.add('no-scroll'); },
+                closeProduct() { this.isModalOpen = false; setTimeout(() => { this.selectedProduct = null; document.body.classList.remove('no-scroll'); }, 400); }
             }
         }
     </script>
 </body>
 </html>
-
-
-
-
-
