@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     
-    <title>La Bravia | Haute Parfumerie</title>
-    <meta name="description" content="La Bravia: A sanctuary of rare olfactory compositions. Discover artisanal fragrances crafted with poetic restraint and timeless elegance. Founded by Aijaz & Rhythunand.">
+    <title>La Bravia | Olfactory Portraits</title>
+    <meta name="description" content="Artisanal fragrances crafted with poetic restraint. Founded by Aijaz & Rhythunand. Silence is the ultimate luxury.">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -24,12 +24,11 @@
                             gold: '#C5A059',
                             dark: '#0A0A0A',
                             paper: '#FDFDFB',
+                            offWhite: '#F5F5F0',
                             stone: '#727272',
                             canvas: '#F5F2ED',
-                            // Custom Dark Mode Tones (intentional, not inverted)
-                            night: '#0F0F0F',      /* Base bg */
-                            obsidian: '#161616',   /* Secondary bg */
-                            shadow: '#1C1C1C'      /* Border / Contrast */
+                            night: '#0F0F0F',
+                            obsidian: '#141414',
                         }
                     },
                     fontFamily: {
@@ -38,8 +37,8 @@
                         sans: ['Inter', 'sans-serif'],
                     },
                     letterSpacing: {
-                        luxury: '0.3em',
-                        hero: '0.5em',
+                        luxury: '0.35em',
+                        hero: '0.6em',
                     }
                 }
             }
@@ -52,86 +51,113 @@
         body {
             -webkit-font-smoothing: antialiased;
             text-rendering: optimizeLegibility;
-            /* Subtly animate theme transitions */
-            transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1), color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: background-color 1.2s cubic-bezier(0.4, 0, 0.2, 1), color 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .no-scroll { overflow: hidden !important; height: 100vh !important; }
+        /* Film Grain Overlay */
+        .grain::after {
+            content: "";
+            position: fixed;
+            top: -150%; left: -150%; width: 300%; height: 300%;
+            background-image: url("https://upload.wikimedia.org/wikipedia/commons/5/5c/Image_with_noise_example.png");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 999;
+            animation: grain 8s steps(10) infinite;
+        }
+
+        @keyframes grain {
+            0%, 100% { transform:translate(0, 0); }
+            10% { transform:translate(-5%, -10%); }
+            30% { transform:translate(-15%, 5%); }
+            50% { transform:translate(-5%, 15%); }
+            70% { transform:translate(0, 10%); }
+            90% { transform:translate(-10%, 5%); }
+        }
+
+        .no-scroll { overflow: hidden !important; }
 
         .reveal-text {
-            animation: text-reveal 2.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+            animation: text-reveal 2.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
             opacity: 0;
         }
+
         @keyframes text-reveal {
-            0% { opacity: 0; transform: translateY(20px); filter: blur(5px); }
+            0% { opacity: 0; transform: translateY(30px); filter: blur(10px); }
             100% { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
-        /* Focus state for the toggle */
-        .theme-toggle:focus-visible {
-            outline: 1px solid #C5A059;
-            outline-offset: 4px;
+        .img-tilt {
+            transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-      .nav-link {
-        position: relative;
-        display: inline-block;
-    }
-    
-    .nav-link::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        bottom: -6px;
-        width: 0;
-        height: 1px;
-        background: rgb(197 160 89 / 60%);
-        transition: width 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-    }
-    
-    .nav-link:hover::after {
-        width: 100%;
-    }
-    
-    .dark .nav-link::after {
-        background: rgb(197 160 89 / 85%);
-    }
-
+        @media (prefers-reduced-motion: reduce) {
+            .reveal-text, .grain::after { animation: none !important; opacity: 1 !important; }
+        }
     </style>
 </head>
-<body class="bg-luxury-paper dark:bg-luxury-night text-luxury-dark dark:text-gray-200 selection:bg-luxury-gold/20">
+<body class="bg-luxury-paper dark:bg-luxury-night text-luxury-dark dark:text-luxury-offWhite selection:bg-luxury-gold/30 grain">
+
+    <div x-show="mobileMenu" 
+         x-transition:enter="transition ease-out duration-700"
+         x-transition:enter-start="opacity-0 translate-y-full"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-500"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 translate-y-full"
+         class="fixed inset-0 z-[150] bg-luxury-paper dark:bg-luxury-night flex flex-col justify-center items-center text-center p-6" x-cloak>
+        
+        <button @click="closeMenu()" class="absolute top-8 right-8 p-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        <nav class="space-y-12">
+            <a href="#collection" @click="closeMenu()" class="block font-display text-2xl tracking-hero uppercase">Collection</a>
+            <a href="#about" @click="closeMenu()" class="block font-display text-2xl tracking-hero uppercase">The Maison</a>
+            <a href="#contact" @click="closeMenu()" class="block font-display text-2xl tracking-hero uppercase">Concierge</a>
+        </nav>
+
+        <div class="mt-20">
+             <button @click="toggleTheme(); closeMenu()" class="text-[10px] uppercase tracking-luxury text-luxury-gold">
+                Toggle Atmosphere
+             </button>
+        </div>
+    </div>
 
     <header>
         <nav class="fixed w-full z-[100] transition-all duration-1000"
-             :class="scrolled ? 'bg-white/90 dark:bg-luxury-night/90 backdrop-blur-md py-4 border-b border-gray-100 dark:border-white/5' : 'bg-transparent py-6 md:py-8'"
-             role="navigation" aria-label="Main Navigation">
-            <div class="max-w-[1600px] mx-auto px-6 md:px-12 flex justify-between items-center">
+             :class="scrolled ? 'bg-white/80 dark:bg-luxury-night/80 backdrop-blur-xl py-4 border-b border-black/5 dark:border-white/5' : 'bg-transparent py-8 md:py-12'"
+             role="navigation">
+            <div class="max-w-[1700px] mx-auto px-8 md:px-16 flex justify-between items-center">
                 
-                <a href="#" class="text-lg md:text-2xl font-display tracking-hero uppercase transition-opacity hover:opacity-70 focus-visible:outline-none" aria-label="La Bravia Home">
+                <a href="#" class="text-xl md:text-2xl font-display tracking-hero uppercase hover:opacity-60 transition-opacity">
                     La Bravia
                 </a>
                 
-                <div class="flex items-center space-x-8 md:space-x-14">
-                    <div class="hidden md:flex space-x-14 text-[10px] uppercase tracking-luxury font-medium">
-                        <a href="#collection" class="nav-link hover:text-luxury-gold transition-colors duration-500">Collection</a>
-                        <a href="#about" class="nav-link hover:text-luxury-gold transition-colors duration-500">The Maison</a>
-                        <a href="#contact" class="nav-link hover:text-luxury-gold transition-colors duration-500">Concierge</a>
+                <div class="flex items-center space-x-12 md:space-x-20">
+                    <div class="hidden md:flex space-x-16 text-[9px] uppercase tracking-luxury font-medium">
+                        <a href="#collection" class="relative group">
+                            Collection
+                            <span class="absolute -bottom-2 left-0 w-0 h-[1px] bg-luxury-gold transition-all duration-700 group-hover:w-full"></span>
+                        </a>
+                        <a href="#about" class="relative group">
+                            The Maison
+                            <span class="absolute -bottom-2 left-0 w-0 h-[1px] bg-luxury-gold transition-all duration-700 group-hover:w-full"></span>
+                        </a>
+                        <a href="#contact" class="relative group">
+                            Concierge
+                            <span class="absolute -bottom-2 left-0 w-0 h-[1px] bg-luxury-gold transition-all duration-700 group-hover:w-full"></span>
+                        </a>
                     </div>
 
-                    <button @click="toggleTheme()" 
-                            class="theme-toggle p-2 rounded-full transition-colors duration-500 hover:bg-black/5 dark:hover:bg-white/5"
-                            :aria-label="darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
-                        <svg x-show="darkMode" x-cloak class="w-4 h-4 text-luxury-gold" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" />
-                        </svg>
-                        <svg x-show="!darkMode" class="w-4 h-4 text-luxury-dark" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-                        </svg>
+                    <button @click="toggleTheme()" class="hidden md:block p-2 hover:opacity-50 transition-opacity">
+                        <svg x-show="!darkMode" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" /></svg>
+                        <svg x-show="darkMode" x-cloak class="w-4 h-4 text-luxury-gold" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                     </button>
 
-                    <button @click="openMenu()" class="md:hidden flex flex-col space-y-1.5 p-2" aria-label="Open Menu">
-                        <span class="w-6 h-[1px] bg-current"></span>
-                        <span class="w-4 h-[1px] bg-current self-end"></span>
+                    <button @click="openMenu()" class="md:hidden flex flex-col space-y-2">
+                        <span class="w-8 h-[1px] bg-current"></span>
+                        <span class="w-5 h-[1px] bg-current self-end"></span>
                     </button>
                 </div>
             </div>
@@ -139,161 +165,169 @@
     </header>
 
     <main>
-        <section class="relative h-[100svh] flex items-center justify-center overflow-hidden bg-luxury-dark">
+        <section class="relative h-[100svh] flex items-center justify-center overflow-hidden bg-black">
             <div class="absolute inset-0 z-0">
                 <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=2000" 
-                     alt="Cinematic luxury perfume bottle" 
-                     class="w-full h-full object-cover opacity-40 scale-105 animate-[pulse_12s_infinite]"
+                     alt="Ethereal scent visualization" 
+                     class="w-full h-full object-cover opacity-60 scale-110 animate-[pulse_15s_infinite] blur-[2px]"
                      decoding="async">
+                <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-luxury-night"></div>
             </div>
             
             <div class="relative z-10 text-center px-6">
-                <h2 class="text-[9px] md:text-xs uppercase tracking-[0.5em] mb-6 text-luxury-gold reveal-text" style="animation-delay: 0.4s">
-                    The Architecture of Scent
-                </h2>
-                <h1 class="text-5xl md:text-9xl font-display mb-8 text-white tracking-hero leading-none reveal-text" style="animation-delay: 0.8s">
-                    LA BRAVIA
-                </h1>
-                <p class="text-sm md:text-xl font-serif italic text-white/70 mb-12 max-w-sm md:max-w-xl mx-auto reveal-text" style="animation-delay: 1.2s">
-                    Hand-poured olfactory portraits. Silence is the ultimate luxury.
+                <p class="text-[10px] uppercase tracking-[0.8em] mb-8 text-luxury-gold reveal-text" style="animation-delay: 0.4s">
+                    Olfactory Portrait No. 01
                 </p>
-                <div class="reveal-text" style="animation-delay: 1.6s">
-                    <a href="#collection" class="inline-block px-10 py-5 bg-white text-luxury-dark uppercase text-[10px] tracking-luxury font-bold hover:bg-luxury-gold hover:text-white transition-all duration-700">
-                        Explore Collection
+                <h1 class="text-6xl md:text-[11rem] font-display mb-10 text-white tracking-hero leading-[0.85] reveal-text" style="animation-delay: 0.9s">
+                    SILENCE
+                </h1>
+                <p class="text-sm md:text-xl font-serif italic text-white/60 mb-16 max-w-sm md:max-w-xl mx-auto reveal-text leading-relaxed" style="animation-delay: 1.4s">
+                    Fragrance as a vessel for memory.<br>Hand-poured in poetic restraint.
+                </p>
+                <div class="reveal-text" style="animation-delay: 1.8s">
+                    <a href="#collection" class="inline-block px-14 py-6 border border-white/20 text-white uppercase text-[9px] tracking-luxury hover:bg-white hover:text-black transition-all duration-1000 backdrop-blur-sm">
+                        Enter Collection
                     </a>
                 </div>
             </div>
         </section>
 
-        <section id="collection" class="py-20 md:py-40 px-6 md:px-12 max-w-[1600px] mx-auto">
-            <header class="mb-16 md:mb-32">
-                <span class="text-[9px] uppercase tracking-luxury text-luxury-gold mb-4 block">Current Editions</span>
-                <h3 class="font-display text-3xl md:text-6xl mb-6 uppercase tracking-tighter">
-                    Signature <span class="italic font-serif normal-case text-luxury-gold">Compositions</span>
-                </h3>
-            </header>
+        <section id="collection" class="py-32 md:py-64 px-8 md:px-16 max-w-[1700px] mx-auto">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-24 md:mb-40 space-y-8">
+                <div>
+                    <span class="text-[10px] uppercase tracking-luxury text-luxury-gold mb-6 block">The Current Anthology</span>
+                    <h3 class="font-display text-4xl md:text-7xl uppercase tracking-tighter leading-tight">
+                        Selected <span class="italic font-serif normal-case text-luxury-gold">Movements</span>
+                    </h3>
+                </div>
+                <p class="max-w-xs text-xs uppercase tracking-widest text-luxury-stone leading-loose">
+                    Naturally derived. Refillable flacons. Hand-blended in small ateliers.
+                </p>
+            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-16 md:gap-y-32">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-20 gap-y-24 md:gap-y-48">
                 <template x-for="product in products" :key="product.id">
-                    <article class="group cursor-pointer" @click="openProduct(product)">
-                        <div class="img-zoom-container aspect-[3/4] mb-6 relative bg-luxury-canvas dark:bg-luxury-obsidian">
+                    <article class="group cursor-pointer" @click="openProduct(product)"
+                             x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
+                        <div class="aspect-[3/4] mb-10 relative overflow-hidden bg-luxury-canvas dark:bg-luxury-obsidian">
                             <img :src="product.image" 
                                  :alt="product.name" 
-                                 class="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal dark:opacity-80" 
+                                 class="w-full h-full object-cover grayscale transition-all duration-[1.5s] ease-out group-hover:scale-105 group-hover:grayscale-0"
+                                 :class="hover ? 'scale-105' : 'scale-100'"
                                  loading="lazy">
-                            <div class="absolute inset-0 bg-luxury-dark/0 group-hover:bg-luxury-dark/5 transition-colors duration-1000"></div>
+                            <div class="absolute inset-0 bg-black/5 dark:bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
                         </div>
-                        <div class="flex justify-between items-start">
+                        <div class="flex justify-between items-baseline border-b border-black/5 dark:border-white/5 pb-4">
                             <div>
-                                <h4 class="font-display text-xl md:text-2xl tracking-wide uppercase" x-text="product.name"></h4>
-                                <p class="text-[9px] uppercase tracking-luxury text-luxury-gold mt-1" x-text="product.category"></p>
+                                <h4 class="font-display text-2xl tracking-wide uppercase mb-1" x-text="product.name"></h4>
+                                <p class="text-[9px] uppercase tracking-luxury text-luxury-gold" x-text="product.category"></p>
                             </div>
-                            <p class="text-luxury-stone dark:text-gray-400 font-serif text-base italic" x-text="'€' + product.price"></p>
+                            <p class="text-luxury-stone font-serif text-lg italic" x-text="'€' + product.price"></p>
                         </div>
                     </article>
                 </template>
             </div>
         </section>
 
-        <section id="about" class="bg-luxury-canvas dark:bg-luxury-obsidian py-20 md:py-40 px-6 md:px-12 border-y border-gray-100 dark:border-white/5">
-            <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 items-center">
-                <div class="lg:col-span-5 space-y-6 md:space-y-10 order-2 lg:order-1">
-                    <span class="text-[9px] uppercase tracking-luxury text-luxury-gold font-bold">The Heritage</span>
-                    <h3 class="font-display text-3xl md:text-5xl uppercase tracking-tighter">
-                        Crafting <span class="italic font-serif text-luxury-stone dark:text-gray-400 normal-case">Permanence</span>
+        <section id="about" class="bg-luxury-canvas dark:bg-luxury-obsidian py-32 md:py-64 px-8 md:px-16 overflow-hidden">
+            <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-24 items-center">
+                <div class="lg:col-span-6 space-y-12 order-2 lg:order-1">
+                    <span class="text-[10px] uppercase tracking-luxury text-luxury-gold font-bold">The Vision</span>
+                    <h3 class="font-display text-4xl md:text-6xl uppercase tracking-tighter leading-tight">
+                        Permanence over <span class="italic font-serif text-luxury-stone normal-case">Trends</span>
                     </h3>
-                    <p class="font-serif text-lg md:text-2xl italic text-luxury-dark/70 dark:text-white/60">
-                        "We do not create for the season. We create for the memory."
-                    </p>
-                    <p class="text-luxury-stone dark:text-gray-400 text-sm md:text-base font-light max-w-md">
-                        La Bravia bridge ancient extraction techniques with modern architecture.
-                    </p>
-                    <div class="pt-4">
-                        <span class="font-display text-[10px] tracking-luxury uppercase">Founding Vision</span>
-                        <span class="block text-[8px] text-luxury-gold uppercase tracking-[0.3em] mt-2">Aijaz & Rhythunand</span>
+                    <div class="space-y-8 font-serif text-xl md:text-3xl italic text-luxury-dark/80 dark:text-luxury-offWhite/70 leading-relaxed">
+                        <p>"We do not seek to decorate the skin."</p>
+                        <p>"We seek to anchor the soul in a singular moment of clarity."</p>
+                    </div>
+                    <div class="pt-12 border-t border-black/5 dark:border-white/10 grid grid-cols-2 gap-8">
+                        <div>
+                            <span class="font-display text-[10px] tracking-luxury uppercase block mb-2">Aijaz & Rhythunand</span>
+                            <p class="text-[10px] uppercase tracking-widest text-luxury-stone">Founding Perfumers</p>
+                        </div>
+                        <div class="text-[10px] uppercase tracking-widest text-luxury-stone leading-relaxed">
+                            Exclusively distributed to connoisseurs. Inquiries answered within 24 hours.
+                        </div>
                     </div>
                 </div>
-                <div class="lg:col-span-7 order-1 lg:order-2">
-                    <div class="aspect-[16/10] overflow-hidden shadow-xl dark:opacity-80">
-                        <img src="https://images.unsplash.com/photo-1547671027-4fcf4a58da95?auto=format&fit=crop&q=80&w=1400" 
-                             alt="Laboratory tools" class="w-full h-full object-cover" loading="lazy">
+                <div class="lg:col-span-6 order-1 lg:order-2">
+                    <div class="aspect-[4/5] relative">
+                        <img src="https://images.unsplash.com/photo-1557170334-a9632e77c6e4?auto=format&fit=crop&q=90&w=1200" 
+                             alt="Poetic ingredient close-up" 
+                             class="w-full h-full object-cover img-tilt shadow-2xl grayscale hover:grayscale-0 transition-all duration-1000">
                     </div>
                 </div>
             </div>
-        </section>
 
-        <section id="contact" class="py-20 md:py-40 bg-luxury-paper dark:bg-luxury-night">
-            <div class="max-w-3xl mx-auto px-6">
-                <div class="text-center mb-16">
-                    <span class="text-[9px] uppercase tracking-luxury text-luxury-gold font-bold block mb-4">Concierge</span>
-                    <h3 class="font-display text-3xl uppercase tracking-widest mb-6">Personal Inquiry</h3>
-                </div>
-                
-                <form class="space-y-12" @submit.prevent>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        <div class="relative">
-                            <input type="text" id="name" required placeholder=" " class="w-full bg-transparent border-b border-gray-200 dark:border-white/10 py-4 focus:border-luxury-gold outline-none transition-all duration-700 peer">
-                            <label for="name" class="absolute left-0 top-4 text-[9px] uppercase tracking-luxury text-luxury-stone transition-all duration-500 peer-focus:-top-6 peer-focus:text-luxury-gold peer-[:not(:placeholder-shown)]:-top-6">Name</label>
-                        </div>
-                        <div class="relative">
-                            <input type="email" id="email" required placeholder=" " class="w-full bg-transparent border-b border-gray-200 dark:border-white/10 py-4 focus:border-luxury-gold outline-none transition-all duration-700 peer">
-                            <label for="email" class="absolute left-0 top-4 text-[9px] uppercase tracking-luxury text-luxury-stone transition-all duration-500 peer-focus:-top-6 peer-focus:text-luxury-gold peer-[:not(:placeholder-shown)]:-top-6">Email</label>
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <button class="w-full md:w-auto px-20 py-5 bg-luxury-dark dark:bg-luxury-gold dark:text-white text-white uppercase text-[10px] tracking-luxury font-bold transition-all duration-700">
-                            Send Inquiry
-                        </button>
-                    </div>
-                </form>
+            <div class="mt-32 max-w-4xl mx-auto text-center border-t border-black/5 dark:border-white/5 pt-20">
+                <p class="font-serif italic text-xl text-luxury-stone mb-4">"The most restrained, elegant compositions I have encountered in a decade."</p>
+                <span class="text-[9px] uppercase tracking-widest">— Private Collector, Paris</span>
             </div>
         </section>
     </main>
 
     <div x-show="isModalOpen" 
-         x-transition:enter="transition ease-out duration-500"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         class="fixed inset-0 z-[200] overflow-y-auto" x-cloak>
+         x-transition:enter="transition ease-out duration-600"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         class="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-12" x-cloak>
         
-        <div class="flex items-end md:items-center justify-center min-h-screen md:p-12">
-            <div class="fixed inset-0 bg-luxury-dark/95 backdrop-blur-sm" @click="closeProduct()"></div>
+        <div class="fixed inset-0 bg-black/95 backdrop-blur-md" @click="closeProduct()"></div>
 
-            <article class="relative bg-white dark:bg-luxury-obsidian max-w-6xl w-full grid md:grid-cols-2 overflow-hidden shadow-2xl h-[90vh] md:h-auto rounded-t-3xl md:rounded-none">
-                <button @click="closeProduct()" class="absolute top-6 right-6 text-luxury-dark dark:text-white z-[210] p-3" aria-label="Close">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-                        <path d="M18 6L6 18M6 6l12 12"/>
-                    </svg>
-                </button>
+        <article class="relative bg-luxury-paper dark:bg-luxury-obsidian max-w-7xl w-full grid md:grid-cols-2 h-full max-h-[90vh] overflow-hidden shadow-2xl">
+            <button @click="closeProduct()" class="absolute top-8 right-8 text-current z-[210] p-4 hover:rotate-90 transition-transform duration-500">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+            
+            <div class="bg-luxury-canvas dark:bg-luxury-night overflow-hidden">
+                <img :src="selectedProduct?.image" 
+                     class="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal opacity-90">
+            </div>
+            
+            <div class="p-10 md:p-24 flex flex-col justify-center overflow-y-auto">
+                <header class="mb-12">
+                    <span class="text-[9px] uppercase tracking-[0.5em] text-luxury-gold font-bold mb-4 block" x-text="selectedProduct?.category"></span>
+                    <h2 class="font-display text-4xl md:text-6xl uppercase tracking-tighter mb-4" x-text="selectedProduct?.name"></h2>
+                    <p class="text-luxury-stone text-2xl font-serif italic" x-text="'€' + selectedProduct?.price"></p>
+                </header>
                 
-                <div class="bg-luxury-canvas dark:bg-luxury-shadow h-[35vh] md:h-auto overflow-hidden">
-                    <img :src="selectedProduct?.image" 
-                         class="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal">
-                </div>
-                
-                <div class="p-8 md:p-20 flex flex-col bg-white dark:bg-luxury-obsidian">
-                    <header class="mb-8">
-                        <span class="text-[8px] uppercase tracking-luxury text-luxury-gold font-bold mb-3 block" x-text="selectedProduct?.category"></span>
-                        <h2 class="font-display text-3xl uppercase tracking-tight" x-text="selectedProduct?.name"></h2>
-                        <p class="text-luxury-stone dark:text-luxury-gold/80 text-xl font-serif italic mt-2" x-text="'€' + selectedProduct?.price"></p>
-                    </header>
-                    
-                    <div class="space-y-8">
-                        <div>
-                            <h5 class="uppercase text-[8px] tracking-[0.3em] text-luxury-stone dark:text-white/20 mb-3 border-b dark:border-white/5 pb-2">Narrative</h5>
-                            <p class="text-luxury-dark/80 dark:text-white/70 font-serif text-base italic leading-relaxed" x-text="selectedProduct?.description"></p>
+                <div class="space-y-12">
+                    <div>
+                        <h5 class="uppercase text-[10px] tracking-luxury text-luxury-stone mb-6 border-b dark:border-white/10 pb-4">Olfactory Narrative</h5>
+                        <p class="text-xl font-serif italic leading-relaxed text-luxury-dark/90 dark:text-white/80" x-text="selectedProduct?.description"></p>
+                    </div>
+
+                    <div class="space-y-6">
+                        <h5 class="uppercase text-[10px] tracking-luxury text-luxury-stone">The Composition</h5>
+                        <div class="space-y-4">
+                            <template x-for="note in selectedProduct?.notes">
+                                <div class="flex items-center justify-between group">
+                                    <span class="text-[9px] uppercase tracking-widest text-luxury-gold" x-text="note.level"></span>
+                                    <span class="text-xs uppercase tracking-widest border-b border-black/10 dark:border-white/10 flex-1 mx-4"></span>
+                                    <span class="text-xs font-medium" x-text="note.ingredients"></span>
+                                </div>
+                            </template>
                         </div>
                     </div>
-
-                    <div class="mt-auto pt-10">
-                        <button class="w-full py-5 bg-luxury-dark dark:bg-white dark:text-luxury-dark text-white uppercase text-[10px] tracking-luxury font-bold transition duration-700">
-                            Concierge Inquire
-                        </button>
-                    </div>
                 </div>
-            </article>
-        </div>
+
+                <div class="mt-16">
+                    <button class="w-full py-6 bg-luxury-dark dark:bg-luxury-gold text-white uppercase text-[10px] tracking-luxury font-bold hover:opacity-80 transition-all duration-700">
+                        Inquire with Concierge
+                    </button>
+                    <p class="text-[8px] uppercase tracking-widest text-luxury-stone mt-6 text-center">Hand-delivered flacon • Complimentary discovery set included</p>
+                </div>
+            </div>
+        </article>
     </div>
+
+    <button @click="window.scrollTo(0,0)" 
+            x-show="scrolled" 
+            x-transition:enter="transition duration-500" 
+            x-transition:enter-start="opacity-0 translate-y-4"
+            class="fixed bottom-10 right-10 z-[90] p-4 border border-black/5 dark:border-white/10 rounded-full backdrop-blur-md hover:border-luxury-gold transition-colors" x-cloak>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7" stroke-width="1.5"/></svg>
+    </button>
 
     <script>
         function laBraviaApp() {
@@ -302,13 +336,12 @@
                 mobileMenu: false,
                 isModalOpen: false,
                 selectedProduct: null,
-                // Dark Mode State with LocalStorage Persistence
                 darkMode: localStorage.getItem('theme') === 'dark' || 
                          (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches),
 
                 init() {
                     window.addEventListener('scroll', () => {
-                        this.scrolled = window.pageYOffset > 50;
+                        this.scrolled = window.pageYOffset > 200;
                     });
                 },
 
@@ -318,9 +351,45 @@
                 },
 
                 products: [
-                    { id: 1, name: "Noir Éclat", category: "Oriental / Intense", price: "285.00", description: "Rare Indonesian Oud and spiced Cardamom.", image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=1000" },
-                    { id: 2, name: "Azure Bloom", category: "Floral / Solar", price: "195.00", description: "Mediterranean garden dawn. Neroli and Jasmine.", image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1000" },
-                    { id: 3, name: "Imperial Or", category: "Gourmand / Amber", price: "340.00", description: "Radiant liquid gold. Vanilla Orchid and Sandalwood.", image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&q=80&w=1000" }
+                    { 
+                        id: 1, 
+                        name: "Noir Éclat", 
+                        category: "Oriental / Shadow", 
+                        price: "285.00", 
+                        description: "A dialogue between smoke and light. A meditation on the void.",
+                        image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=1200",
+                        notes: [
+                            { level: 'Top', ingredients: 'Cardamom, Black Tea' },
+                            { level: 'Heart', ingredients: 'Indonesian Oud, Iris' },
+                            { level: 'Base', ingredients: 'Vetiver, Liquid Smoke' }
+                        ]
+                    },
+                    { 
+                        id: 2, 
+                        name: "Azure Bloom", 
+                        category: "Floral / Ethereal", 
+                        price: "195.00", 
+                        description: "The stillness of a Mediterranean dawn. Soft, architectural, crystalline.",
+                        image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1200",
+                        notes: [
+                            { level: 'Top', ingredients: 'Bergamot, Neroli' },
+                            { level: 'Heart', ingredients: 'Jasmine Sambac' },
+                            { level: 'Base', ingredients: 'White Musk, Salt' }
+                        ]
+                    },
+                    { 
+                        id: 3, 
+                        name: "Imperial Or", 
+                        category: "Gourmand / Sculptural", 
+                        price: "340.00", 
+                        description: "Radiant warmth. The weight of gold. An enduring silhouette.",
+                        image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&q=80&w=1200",
+                        notes: [
+                            { level: 'Top', ingredients: 'Saffron, Honey' },
+                            { level: 'Heart', ingredients: 'Vanilla Orchid' },
+                            { level: 'Base', ingredients: 'Sandalwood, Amber' }
+                        ]
+                    }
                 ],
                 openMenu() { this.mobileMenu = true; document.body.classList.add('no-scroll'); },
                 closeMenu() { this.mobileMenu = false; document.body.classList.remove('no-scroll'); },
