@@ -5,14 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     
     <title>La Bravia | Olfactory Portraits</title>
-    <meta name="description" content="Artisanal fragrances crafted with poetic restraint. Founded by Aijaz & Rhythunand. Silence is the ultimate luxury.">
+    <meta name="description" content="Artisanal fragrances crafted with poetic restraint. Silence is the ultimate luxury.">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -54,13 +58,13 @@
             transition: background-color 1.2s cubic-bezier(0.4, 0, 0.2, 1), color 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Film Grain Overlay */
+        /* Film Grain Overlay - "Analog Luxury" */
         .grain::after {
             content: "";
             position: fixed;
             top: -150%; left: -150%; width: 300%; height: 300%;
             background-image: url("https://upload.wikimedia.org/wikipedia/commons/5/5c/Image_with_noise_example.png");
-            opacity: 0.04;
+            opacity: 0.035;
             pointer-events: none;
             z-index: 999;
             animation: grain 8s steps(10) infinite;
@@ -76,23 +80,10 @@
         }
 
         .no-scroll { overflow: hidden !important; }
-
-        .reveal-text {
-            animation: text-reveal 2.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-            opacity: 0;
-        }
-
-        @keyframes text-reveal {
-            0% { opacity: 0; transform: translateY(30px); filter: blur(10px); }
-            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
-        }
-
-        .img-tilt {
-            transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .reveal-text, .grain::after { animation: none !important; opacity: 1 !important; }
+        
+        /* Initial states for GSAP to handle */
+        .hero-text, .reveal-on-scroll, .product-card, .modal-content {
+            opacity: 0; /* JS will reveal these */
         }
     </style>
 </head>
@@ -107,14 +98,14 @@
          x-transition:leave-end="opacity-0 translate-y-full"
          class="fixed inset-0 z-[150] bg-luxury-paper dark:bg-luxury-night flex flex-col justify-center items-center text-center p-6" x-cloak>
         
-        <button @click="closeMenu()" class="absolute top-8 right-8 p-4">
+        <button @click="closeMenu()" class="absolute top-8 right-8 p-4 text-luxury-stone hover:text-luxury-gold transition-colors">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
         <nav class="space-y-12">
-            <a href="#collection" @click="closeMenu()" class="block font-display text-2xl tracking-hero uppercase">Collection</a>
-            <a href="#about" @click="closeMenu()" class="block font-display text-2xl tracking-hero uppercase">The Maison</a>
-            <a href="#contact" @click="closeMenu()" class="block font-display text-2xl tracking-hero uppercase">Concierge</a>
+            <a href="#collection" @click="closeMenu()" class="block font-display text-2xl tracking-hero uppercase hover:text-luxury-gold transition-colors">Collection</a>
+            <a href="#about" @click="closeMenu()" class="block font-display text-2xl tracking-hero uppercase hover:text-luxury-gold transition-colors">The Maison</a>
+            <a href="#contact" @click="closeMenu()" class="block font-display text-2xl tracking-hero uppercase hover:text-luxury-gold transition-colors">Concierge</a>
         </nav>
 
         <div class="mt-20">
@@ -130,11 +121,11 @@
              role="navigation">
             <div class="max-w-[1700px] mx-auto px-8 md:px-16 flex justify-between items-center">
                 
-                <a href="#" class="text-xl md:text-2xl font-display tracking-hero uppercase hover:opacity-60 transition-opacity">
+                <a href="#" class="text-xl md:text-2xl font-display tracking-hero uppercase hover:opacity-60 transition-opacity z-50 relative">
                     La Bravia
                 </a>
                 
-                <div class="flex items-center space-x-12 md:space-x-20">
+                <div class="flex items-center space-x-12 md:space-x-20 z-50 relative">
                     <div class="hidden md:flex space-x-16 text-[9px] uppercase tracking-luxury font-medium">
                         <a href="#collection" class="relative group">
                             Collection
@@ -169,22 +160,22 @@
             <div class="absolute inset-0 z-0">
                 <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=2000" 
                      alt="Ethereal scent visualization" 
-                     class="w-full h-full object-cover opacity-60 scale-110 animate-[pulse_15s_infinite] blur-[2px]"
+                     class="hero-bg w-full h-full object-cover opacity-60 blur-[1px]"
                      decoding="async">
                 <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-luxury-night"></div>
             </div>
             
             <div class="relative z-10 text-center px-6">
-                <p class="text-[10px] uppercase tracking-[0.8em] mb-8 text-luxury-gold reveal-text" style="animation-delay: 0.4s">
+                <p class="hero-text text-[10px] uppercase tracking-[0.8em] mb-8 text-luxury-gold">
                     Olfactory Portrait No. 01
                 </p>
-                <h1 class="text-6xl md:text-[11rem] font-display mb-10 text-white tracking-hero leading-[0.85] reveal-text" style="animation-delay: 0.9s">
+                <h1 class="hero-text text-6xl md:text-[11rem] font-display mb-10 text-white tracking-hero leading-[0.85]">
                     SILENCE
                 </h1>
-                <p class="text-sm md:text-xl font-serif italic text-white/60 mb-16 max-w-sm md:max-w-xl mx-auto reveal-text leading-relaxed" style="animation-delay: 1.4s">
+                <p class="hero-text text-sm md:text-xl font-serif italic text-white/60 mb-16 max-w-sm md:max-w-xl mx-auto leading-relaxed">
                     Fragrance as a vessel for memory.<br>Hand-poured in poetic restraint.
                 </p>
-                <div class="reveal-text" style="animation-delay: 1.8s">
+                <div class="hero-text">
                     <a href="#collection" class="inline-block px-14 py-6 border border-white/20 text-white uppercase text-[9px] tracking-luxury hover:bg-white hover:text-black transition-all duration-1000 backdrop-blur-sm">
                         Enter Collection
                     </a>
@@ -192,8 +183,8 @@
             </div>
         </section>
 
-        <section id="collection" class="py-32 md:py-64 px-8 md:px-16 max-w-[1700px] mx-auto">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-24 md:mb-40 space-y-8">
+        <section id="collection" class="py-32 md:py-64 px-8 md:px-16 max-w-[1700px] mx-auto min-h-screen">
+            <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between mb-24 md:mb-40 space-y-8">
                 <div>
                     <span class="text-[10px] uppercase tracking-luxury text-luxury-gold mb-6 block">The Current Anthology</span>
                     <h3 class="font-display text-4xl md:text-7xl uppercase tracking-tighter leading-tight">
@@ -207,13 +198,12 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-20 gap-y-24 md:gap-y-48">
                 <template x-for="product in products" :key="product.id">
-                    <article class="group cursor-pointer" @click="openProduct(product)"
+                    <article class="product-card group cursor-pointer" @click="openProduct(product)"
                              x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
                         <div class="aspect-[3/4] mb-10 relative overflow-hidden bg-luxury-canvas dark:bg-luxury-obsidian">
                             <img :src="product.image" 
                                  :alt="product.name" 
                                  class="w-full h-full object-cover grayscale transition-all duration-[1.5s] ease-out group-hover:scale-105 group-hover:grayscale-0"
-                                 :class="hover ? 'scale-105' : 'scale-100'"
                                  loading="lazy">
                             <div class="absolute inset-0 bg-black/5 dark:bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
                         </div>
@@ -231,7 +221,7 @@
 
         <section id="about" class="bg-luxury-canvas dark:bg-luxury-obsidian py-32 md:py-64 px-8 md:px-16 overflow-hidden">
             <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-24 items-center">
-                <div class="lg:col-span-6 space-y-12 order-2 lg:order-1">
+                <div class="reveal-on-scroll lg:col-span-6 space-y-12 order-2 lg:order-1">
                     <span class="text-[10px] uppercase tracking-luxury text-luxury-gold font-bold">The Vision</span>
                     <h3 class="font-display text-4xl md:text-6xl uppercase tracking-tighter leading-tight">
                         Permanence over <span class="italic font-serif text-luxury-stone normal-case">Trends</span>
@@ -250,48 +240,71 @@
                         </div>
                     </div>
                 </div>
-                <div class="lg:col-span-6 order-1 lg:order-2">
-                    <div class="aspect-[4/5] relative">
+                <div class="lg:col-span-6 order-1 lg:order-2 parallax-container relative h-full">
+                    <div class="aspect-[4/5] relative overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1557170334-a9632e77c6e4?auto=format&fit=crop&q=90&w=1200" 
                              alt="Poetic ingredient close-up" 
-                             class="w-full h-full object-cover img-tilt shadow-2xl grayscale hover:grayscale-0 transition-all duration-1000">
+                             class="parallax-img w-full h-[120%] object-cover grayscale hover:grayscale-0 transition-all duration-1000 -translate-y-10">
                     </div>
                 </div>
             </div>
 
-            <div class="mt-32 max-w-4xl mx-auto text-center border-t border-black/5 dark:border-white/5 pt-20">
+            <div class="reveal-on-scroll mt-32 max-w-4xl mx-auto text-center border-t border-black/5 dark:border-white/5 pt-20">
                 <p class="font-serif italic text-xl text-luxury-stone mb-4">"The most restrained, elegant compositions I have encountered in a decade."</p>
                 <span class="text-[9px] uppercase tracking-widest">— Private Collector, Paris</span>
+            </div>
+        </section>
+        
+        <section id="contact" class="py-32 px-8 md:px-16 reveal-on-scroll">
+            <div class="max-w-2xl mx-auto text-center space-y-12">
+                <span class="text-[10px] uppercase tracking-luxury text-luxury-gold">Concierge</span>
+                <h3 class="font-display text-4xl uppercase tracking-widest">Inquire</h3>
+                <div class="space-y-6">
+                     <input type="email" placeholder="Your Email Address" class="w-full bg-transparent border-b border-black/10 dark:border-white/10 py-4 text-center focus:border-luxury-gold outline-none transition-colors">
+                     <button class="px-12 py-4 bg-luxury-dark dark:bg-luxury-gold text-white uppercase text-[10px] tracking-luxury">Send</button>
+                </div>
             </div>
         </section>
     </main>
 
     <div x-show="isModalOpen" 
-         x-transition:enter="transition ease-out duration-600"
-         x-transition:enter-start="opacity-0 scale-95"
-         x-transition:enter-end="opacity-100 scale-100"
          class="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-12" x-cloak>
         
-        <div class="fixed inset-0 bg-black/95 backdrop-blur-md" @click="closeProduct()"></div>
+        <div x-show="isModalOpen"
+             x-transition:enter="transition ease-out duration-700"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-500"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-black/95 backdrop-blur-md" @click="closeProduct()"></div>
 
-        <article class="relative bg-luxury-paper dark:bg-luxury-obsidian max-w-7xl w-full grid md:grid-cols-2 h-full max-h-[90vh] overflow-hidden shadow-2xl">
+        <article x-show="isModalOpen"
+                 x-transition:enter="transition ease-out duration-700 delay-100"
+                 x-transition:enter-start="opacity-0 scale-95 translate-y-8"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-300"
+                 x-transition:leave-start="opacity-100 scale-100"
+                 x-transition:leave-end="opacity-0 scale-95"
+                 class="relative bg-luxury-paper dark:bg-luxury-obsidian max-w-7xl w-full grid md:grid-cols-2 h-full max-h-[90vh] overflow-hidden shadow-2xl modal-container">
+            
             <button @click="closeProduct()" class="absolute top-8 right-8 text-current z-[210] p-4 hover:rotate-90 transition-transform duration-500">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
             
-            <div class="bg-luxury-canvas dark:bg-luxury-night overflow-hidden">
+            <div class="bg-luxury-canvas dark:bg-luxury-night overflow-hidden relative">
                 <img :src="selectedProduct?.image" 
-                     class="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal opacity-90">
+                     class="modal-img w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal opacity-90">
             </div>
             
-            <div class="p-10 md:p-24 flex flex-col justify-center overflow-y-auto">
-                <header class="mb-12">
+            <div class="p-10 md:p-24 flex flex-col justify-center overflow-y-auto relative">
+                <header class="mb-12 modal-reveal">
                     <span class="text-[9px] uppercase tracking-[0.5em] text-luxury-gold font-bold mb-4 block" x-text="selectedProduct?.category"></span>
                     <h2 class="font-display text-4xl md:text-6xl uppercase tracking-tighter mb-4" x-text="selectedProduct?.name"></h2>
                     <p class="text-luxury-stone text-2xl font-serif italic" x-text="'€' + selectedProduct?.price"></p>
                 </header>
                 
-                <div class="space-y-12">
+                <div class="space-y-12 modal-reveal">
                     <div>
                         <h5 class="uppercase text-[10px] tracking-luxury text-luxury-stone mb-6 border-b dark:border-white/10 pb-4">Olfactory Narrative</h5>
                         <p class="text-xl font-serif italic leading-relaxed text-luxury-dark/90 dark:text-white/80" x-text="selectedProduct?.description"></p>
@@ -311,23 +324,14 @@
                     </div>
                 </div>
 
-                <div class="mt-16">
+                <div class="mt-16 modal-reveal">
                     <button class="w-full py-6 bg-luxury-dark dark:bg-luxury-gold text-white uppercase text-[10px] tracking-luxury font-bold hover:opacity-80 transition-all duration-700">
                         Inquire with Concierge
                     </button>
-                    <p class="text-[8px] uppercase tracking-widest text-luxury-stone mt-6 text-center">Hand-delivered flacon • Complimentary discovery set included</p>
                 </div>
             </div>
         </article>
     </div>
-
-    <button @click="window.scrollTo(0,0)" 
-            x-show="scrolled" 
-            x-transition:enter="transition duration-500" 
-            x-transition:enter-start="opacity-0 translate-y-4"
-            class="fixed bottom-10 right-10 z-[90] p-4 border border-black/5 dark:border-white/10 rounded-full backdrop-blur-md hover:border-luxury-gold transition-colors" x-cloak>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7" stroke-width="1.5"/></svg>
-    </button>
 
     <script>
         function laBraviaApp() {
@@ -340,8 +344,100 @@
                          (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches),
 
                 init() {
+                    // Alpine Init Logic
                     window.addEventListener('scroll', () => {
-                        this.scrolled = window.pageYOffset > 200;
+                        this.scrolled = window.pageYOffset > 50;
+                    });
+                    
+                    // --- GSAP ANIMATION INTEGRATION ---
+                    this.initAnimations();
+                    
+                    // Watch for Modal Open to Trigger Modal Specific Animations
+                    this.$watch('isModalOpen', (value) => {
+                        if (value) {
+                            setTimeout(() => {
+                                // Animate Modal Inner Content
+                                gsap.fromTo('.modal-reveal', 
+                                    { y: 30, opacity: 0 },
+                                    { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power2.out', delay: 0.3 }
+                                );
+                                gsap.fromTo('.modal-img',
+                                    { scale: 1.1, opacity: 0 },
+                                    { scale: 1, opacity: 0.9, duration: 1.5, ease: 'power2.out' }
+                                );
+                            }, 100);
+                        }
+                    });
+                },
+
+                initAnimations() {
+                    // Register Plugin
+                    gsap.registerPlugin(ScrollTrigger);
+
+                    // Check for reduced motion
+                    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                    if (prefersReducedMotion) {
+                        gsap.set('.hero-text, .reveal-on-scroll, .product-card', { opacity: 1 });
+                        return;
+                    }
+
+                    // 1. Hero Animations
+                    // Staggered Text Reveal
+                    gsap.to('.hero-text', {
+                        y: 0,
+                        opacity: 1,
+                        duration: 1.8,
+                        stagger: 0.2,
+                        ease: 'power3.out',
+                        delay: 0.2
+                    });
+
+                    // Infinite Breathing Background
+                    gsap.to('.hero-bg', {
+                        scale: 1.08,
+                        duration: 25,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: 'sine.inOut'
+                    });
+
+                    // 2. General Section Reveals (Float Up)
+                    gsap.utils.toArray('.reveal-on-scroll').forEach((elem) => {
+                        gsap.fromTo(elem, 
+                            { y: 80, opacity: 0 },
+                            {
+                                y: 0,
+                                opacity: 1,
+                                duration: 1.5,
+                                ease: 'power3.out',
+                                scrollTrigger: {
+                                    trigger: elem,
+                                    start: "top 85%",
+                                    toggleActions: "play none none reverse"
+                                }
+                            }
+                        );
+                    });
+
+                    // 3. Product Grid Cascade (Staggered Batch)
+                    ScrollTrigger.batch(".product-card", {
+                        onEnter: batch => gsap.fromTo(batch, 
+                            { y: 60, opacity: 0 }, 
+                            { y: 0, opacity: 1, stagger: 0.15, duration: 1.2, ease: "power3.out" }
+                        ),
+                        start: "top 85%"
+                    });
+
+                    // 4. Parallax Effect for About Image
+                    gsap.to(".parallax-img", {
+                        yPercent: 20, // Moves image down slowly as container moves up
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: ".parallax-container",
+                            start: "top bottom", 
+                            end: "bottom top",
+                            scrub: true
+                        } 
                     });
                 },
 
@@ -356,7 +452,7 @@
                         name: "Noir Éclat", 
                         category: "Oriental / Shadow", 
                         price: "285.00", 
-                        description: "A dialogue between smoke and light. A meditation on the void.",
+                        description: "A dialogue between smoke and light. A meditation on the void. This composition rests on the skin like a shadow, evolving from sharp cardamom to a deep, resinous silence.",
                         image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=1200",
                         notes: [
                             { level: 'Top', ingredients: 'Cardamom, Black Tea' },
@@ -369,7 +465,7 @@
                         name: "Azure Bloom", 
                         category: "Floral / Ethereal", 
                         price: "195.00", 
-                        description: "The stillness of a Mediterranean dawn. Soft, architectural, crystalline.",
+                        description: "The stillness of a Mediterranean dawn. Soft, architectural, crystalline. It captures the fleeting moment when the sun first hits the marble terrace.",
                         image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1200",
                         notes: [
                             { level: 'Top', ingredients: 'Bergamot, Neroli' },
@@ -382,7 +478,7 @@
                         name: "Imperial Or", 
                         category: "Gourmand / Sculptural", 
                         price: "340.00", 
-                        description: "Radiant warmth. The weight of gold. An enduring silhouette.",
+                        description: "Radiant warmth. The weight of gold. An enduring silhouette. A rich, enveloping scent that feels like wrapping oneself in heavy velvet.",
                         image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&q=80&w=1200",
                         notes: [
                             { level: 'Top', ingredients: 'Saffron, Honey' },
