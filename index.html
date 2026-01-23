@@ -392,43 +392,62 @@
         </article>
     </div>
     <script>
-        init() {
-        // 1. Theme Sync: Apply the class immediately on load
-            if (this.darkMode) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        
-            // 2. Watcher: This is the "secret sauce" for consistency
-            this.$watch('darkMode', (val) => {
-                if (val) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-            });
-        
-            // ... your existing scroll and GSAP init logic
-            window.addEventListener('scroll', () => {
-                this.scrolled = window.pageYOffset > 50;
-            });
-            this.initAnimations();
-        },
+        function laBraviaApp() {
+            return {
+                scrolled: false,
+                mobileMenu: false,
+                isModalOpen: false,
+                selectedProduct: null,
+                darkMode: localStorage.getItem('theme') === 'dark' || 
+                         (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches),
+                init() {
+                    window.addEventListener('scroll', () => {
+                        this.scrolled = window.pageYOffset > 50;
+                    });
+
+                    // --- GSAP ANIMATION INTEGRATION ---
+
+                    this.initAnimations();
+
+                    // Watch for Modal Open to Trigger Modal Specific Animations
+
+                    this.$watch('isModalOpen', (value) => {
+                        if (value) {
+                            setTimeout(() => {
+                                // Animate Modal Inner Content
+                                gsap.fromTo('.modal-reveal', 
+                                    { y: 30, opacity: 0 },
+                                    { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power2.out', delay: 0.3 }
+                                );
+
+                                gsap.fromTo('.modal-img',
+                                    { scale: 1.1, opacity: 0 },
+                                    { scale: 1, opacity: 0.9, duration: 1.5, ease: 'power2.out' }
+                                );
+                            }, 100);
+                        }
+                    });
+                },
 
                 initAnimations() {
+
                     // Register Plugin
+
                     gsap.registerPlugin(ScrollTrigger);
 
                     // Check for reduced motion
+
                     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
                     if (prefersReducedMotion) {
                         gsap.set('.hero-text, .reveal-on-scroll, .product-card', { opacity: 1 });
                         return;
                     }
 
                     // 1. Hero Animations
+
                     // Staggered Text Reveal
+
                     gsap.to('.hero-text', {
                         y: 0,
                         opacity: 1,
@@ -439,6 +458,7 @@
                     });
 
                     // Infinite Breathing Background
+
                     gsap.to('.hero-bg', {
                         scale: 1.08,
                         duration: 25,
@@ -448,14 +468,17 @@
                     });
 
                     // 2. General Section Reveals (Float Up)
+
                     gsap.utils.toArray('.reveal-on-scroll').forEach((elem) => {
                         gsap.fromTo(elem, 
                             { y: 80, opacity: 0 },
+                                    
                             {
                                 y: 0,
                                 opacity: 1,
                                 duration: 1.5,
                                 ease: 'power3.out',
+
                                 scrollTrigger: {
                                     trigger: elem,
                                     start: "top 85%",
@@ -466,6 +489,7 @@
                     });
 
                     // 3. Product Grid Cascade (Staggered Batch)
+
                     ScrollTrigger.batch(".product-card", {
                         onEnter: batch => gsap.fromTo(batch, 
                             { y: 60, opacity: 0 }, 
@@ -475,9 +499,11 @@
                     });
 
                     // 4. Parallax Effect for About Image
+
                     gsap.to(".parallax-img", {
                         yPercent: 20, // Moves image down slowly as container moves up
                         ease: "none",
+
                         scrollTrigger: {
                             trigger: ".parallax-container",
                             start: "top bottom", 
@@ -500,12 +526,14 @@
                         price: "285.00", 
                         description: "A dialogue between smoke and light. A meditation on the void. This composition rests on the skin like a shadow, evolving from sharp cardamom to a deep, resinous silence.",
                         image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=1200",
+
                         notes: [
                             { level: 'Top', ingredients: 'Cardamom, Black Tea' },
                             { level: 'Heart', ingredients: 'Indonesian Oud, Iris' },
                             { level: 'Base', ingredients: 'Vetiver, Liquid Smoke' }
                         ]
                     },
+
                     { 
                         id: 2, 
                         name: "Azure Bloom", 
@@ -513,12 +541,14 @@
                         price: "195.00", 
                         description: "The stillness of a Mediterranean dawn. Soft, architectural, crystalline. It captures the fleeting moment when the sun first hits the marble terrace.",
                         image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1200",
+                        
                         notes: [
                             { level: 'Top', ingredients: 'Bergamot, Neroli' },
                             { level: 'Heart', ingredients: 'Jasmine Sambac' },
                             { level: 'Base', ingredients: 'White Musk, Salt' }
                         ]
                     },
+
                     { 
                         id: 3, 
                         name: "Imperial Or", 
@@ -526,6 +556,7 @@
                         price: "340.00", 
                         description: "Radiant warmth. The weight of gold. An enduring silhouette. A rich, enveloping scent that feels like wrapping oneself in heavy velvet.",
                         image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&q=80&w=1200",
+
                         notes: [
                             { level: 'Top', ingredients: 'Saffron, Honey' },
                             { level: 'Heart', ingredients: 'Vanilla Orchid' },
@@ -539,8 +570,10 @@
                 closeProduct() { this.isModalOpen = false; setTimeout(() => { this.selectedProduct = null; document.body.classList.remove('no-scroll'); }, 400); }
             }
         }
+
     </script>
 </body>
 </html>
+
 
 
