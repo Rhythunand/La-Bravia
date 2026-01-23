@@ -45,8 +45,8 @@
                         hero: '0.6em',
                     }
                 }
-            }
-        }
+
+               
     </script>
 
     <style>
@@ -84,6 +84,50 @@
         /* Initial states for GSAP to handle */
         .hero-text, .reveal-on-scroll, .product-card, .modal-content {
             opacity: 0; /* JS will reveal these */
+        }
+
+        input, textarea {
+            background: transparent !important;
+            border: none !important;
+            border-bottom: 1px solid #727272 !important;
+            border-radius: 0 !important;
+            color: #F5F5F0 !important;
+            padding: 12px 0 !important;
+        }
+        input:focus, textarea:focus {
+            border-bottom-color: #C5A059 !important;
+            box-shadow: 0 1px 0 0 #C5A059 !important;
+        }
+        
+        /* Serif + luxury spacing */
+        label, input, textarea {
+            font-family: 'Cormorant Garamond', serif !important;
+            letter-spacing: 0.05em !important;
+        }
+        h1, h2, h3, button {
+            font-family: 'Cinzel', serif !important;
+            letter-spacing: 0.35em !important;
+            text-transform: uppercase !important;
+            color: #F5F5F0 !important;
+        }
+        
+        /* Gold button hover */
+        button {
+            background: #0A0A0A !important;
+            color: #F5F5F0 !important;
+            transition: all 0.7s ease !important;
+            border: 1px solid #C5A059/20 !important;
+        }
+        button:hover {
+            background: #C5A059 !important;
+            color: #0A0A0A !important;
+            box-shadow: 0 4px 12px rgba(197,160,89,0.3) !important;
+        }
+        
+        /* Minimal form width */
+        .tally-form {
+            max-width: 600px !important;
+            margin: 0 auto !important;
         }
     </style>
 </head>
@@ -496,3 +540,4 @@
     </script>
 </body>
 </html>
+
