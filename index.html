@@ -124,6 +124,17 @@
             color: #0A0A0A !important;
             box-shadow: 0 4px 12px rgba(197,160,89,0.3) !important;
         }
+
+        /* Only style buttons that need it – avoid overriding Tailwind dark variants */
+        button:not(.theme-toggle) {
+            transition: all 0.7s ease;
+        }
+        
+        /* Explicitly protect the Send/Inquire buttons */
+        button.bg-luxury-dark,
+        button.bg-luxury-gold {
+            color: white !important; /* force white text for contrast */
+        }
         
         /* Minimal form width */
         .tally-form {
@@ -591,6 +602,7 @@
     </script>
 </body>
 </html>
+
 
 
 
