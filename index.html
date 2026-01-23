@@ -51,14 +51,14 @@
 
     <style>
         [x-cloak] { display: none !important; }
-        
+    
         body {
             -webkit-font-smoothing: antialiased;
             text-rendering: optimizeLegibility;
             transition: background-color 1.2s cubic-bezier(0.4, 0, 0.2, 1), color 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        /* Film Grain Overlay - "Analog Luxury" */
+    
+        /* Film Grain Overlay */
         .grain::after {
             content: "";
             position: fixed;
@@ -69,86 +69,67 @@
             z-index: 999;
             animation: grain 8s steps(10) infinite;
         }
-
+    
         @keyframes grain {
-            0%, 100% { transform:translate(0, 0); }
-            10% { transform:translate(-5%, -10%); }
-            30% { transform:translate(-15%, 5%); }
-            50% { transform:translate(-5%, 15%); }
-            70% { transform:translate(0, 10%); }
-            90% { transform:translate(-10%, 5%); }
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-5%, -10%); }
+            30% { transform: translate(-15%, 5%); }
+            50% { transform: translate(-5%, 15%); }
+            70% { transform: translate(0, 10%); }
+            90% { transform: translate(-10%, 5%); }
         }
-
+    
         .no-scroll { overflow: hidden !important; }
-        
-        /* Initial states for GSAP to handle */
+    
+        /* GSAP initial states */
         .hero-text, .reveal-on-scroll, .product-card, .modal-content {
-            opacity: 0; /* JS will reveal these */
+            opacity: 0;
         }
-
-        input, textarea {
+    
+        /* Theme toggle – no background */
+        .theme-toggle {
             background: transparent !important;
             border: none !important;
-            border-bottom: 1px solid #727272 !important;
-            border-radius: 0 !important;
-            padding: 12px 0 !important;
-            font-family: 'Cormorant Garamond', serif !important;
-            letter-spacing: 0.05em !important;
+            padding: 0.5rem !important;
         }
-        
-        input:focus, textarea:focus {
-            border-bottom-color: #C5A059 !important;
-            box-shadow: 0 1px 0 0 #C5A059 !important;
-        }
-        
-        /* Serif + luxury spacing */
-        label, input, textarea {
-            font-family: 'Cormorant Garamond', serif !important;
-            letter-spacing: 0.05em !important;
-        }
-        h1, h2, h3, button {
-            font-family: 'Cinzel', serif !important;
-            letter-spacing: 0.35em !important;
-            text-transform: uppercase !important;
-        }
-        
-        /* Gold button hover */
-        button {
-            background: #0A0A0A !important;
-            color: #F5F5F0 !important;
-            transition: all 0.7s ease !important;
-            border: 1px solid #C5A059/20 !important;
-        }
-        button:hover {
-            background: #C5A059 !important;
-            color: #0A0A0A !important;
-            box-shadow: 0 4px 12px rgba(197,160,89,0.3) !important;
-        }
-
-        /* Only style buttons that need it – avoid overriding Tailwind dark variants */
-        button:not(.theme-toggle) {
-            transition: all 0.7s ease;
-        }
-        
-        /* Explicitly protect the Send/Inquire buttons */
-        button.bg-luxury-dark,
-        button.bg-luxury-gold {
-            color: white !important; /* force white text for contrast */
-        }
-        
-        /* Minimal form width */
-        .tally-form {
-            max-width: 600px !important;
-            margin: 0 auto !important;
-        }
-
-        .theme-toggle {
-            background: transparent !important;  /* Remove black bg */
-            border: none !important;            /* Optional: clean up if you don't want border */
-            padding: 0.5rem !important;         /* Keep spacing consistent */
-        }
+    
         .theme-toggle svg {
-            background: transparent !important; /* Ensure no bg on icon itself */
+            background: transparent !important;
+        }
+    
+        /* Clean inputs – mode-aware text color */
+        input, textarea {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #727272;
+            border-radius: 0;
+            padding: 12px 0;
+            font-family: 'Cormorant Garamond', serif;
+            letter-spacing: 0.05em;
+            transition: border-color 0.3s ease;
+        }
+    
+        /* Light mode: dark text */
+        input:not(.dark input), textarea:not(.dark textarea) {
+            color: #0A0A0A;
+        }
+    
+        /* Dark mode: offWhite text */
+        .dark input, .dark textarea {
+            color: #F5F5F0;
+        }
+    
+        /* Placeholder */
+        input::placeholder, textarea::placeholder {
+            color: #727272;
+            opacity: 0.7;
+        }
+    
+        /* Gold focus */
+        input:focus, textarea:focus {
+            border-bottom-color: #C5A059;
+            box-shadow: 0 1px 0 0 #C5A059;
+            outline: none;
         }
     </style>
 </head>
@@ -338,10 +319,33 @@
             <div class="max-w-2xl mx-auto text-center space-y-12">
                 <span class="text-[10px] uppercase tracking-luxury text-luxury-gold">Concierge</span>
                 <h3 class="font-display text-4xl uppercase tracking-widest">Inquire</h3>
-                <div class="space-y-6">
-                     <input type="email" placeholder="Your Email Address" class="w-full bg-transparent border-b border-black/10 dark:border-white/10 py-4 text-center focus:border-luxury-gold outline-none transition-colors">
-                     <button class="px-12 py-4 bg-luxury-dark dark:bg-luxury-gold text-white uppercase text-[10px] tracking-luxury">Send</button>
-                </div>
+        
+                <form action="https://api.web3forms.com/submit" method="POST" class="space-y-8">
+                    <input type="hidden" name="access_key" value="6ee93019-2192-4e0e-924b-acb84b78e8ff">
+        
+                    <!-- Optional: Custom subject for your received email -->
+                    <input type="hidden" name="subject" value="La Bravia Inquiry – {{email}}">
+        
+                    <!-- Optional: Redirect to thank-you page after submit -->
+                    <input type="hidden" name="redirect" value="https://your-site.com/thank-you.html">
+        
+                    <input 
+                        type="email" 
+                        name="email" 
+                        placeholder="Your Email Address" 
+                        required
+                        class="w-full bg-transparent border-b border-luxury-stone/50 dark:border-luxury-stone/40 py-4 px-0 text-luxury-dark dark:text-luxury-offWhite placeholder-luxury-stone/70 dark:placeholder-luxury-stone/60 focus:border-luxury-gold focus:ring-0 focus:outline-none transition-all duration-300 text-center"
+                    />
+        
+                    <button 
+                        type="submit"
+                        class="px-12 py-4 bg-luxury-dark dark:bg-luxury-gold text-white uppercase text-[10px] tracking-luxury hover:opacity-90 transition-opacity"
+                    >
+                        Send Inquiry
+                    </button>
+                </form>
+        
+                <p class="text-xs italic text-luxury-stone mt-6">Your message has been received in silence. Our team will respond within 24 hours.</p>
             </div>
         </section>
     </main>
@@ -602,6 +606,7 @@
     </script>
 </body>
 </html>
+
 
 
 
