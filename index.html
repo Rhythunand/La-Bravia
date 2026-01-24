@@ -117,25 +117,43 @@
             transform: scale(1.5);
         }
 
+        /* Replace/add to existing .act styles: */
         .act {
-            padding: 0 5vw;          /* ← add this — creates side margins on wide screens */
+            padding: 0 clamp(2rem, 8vw, 12rem);  /* Responsive side margins */
         }
-
-        .act > div[style*="position: relative; z-index: 10"] {   /* targets the wrapper div in Act II & III */
+        
+        .act > div[style*="position: relative"] {
             width: 100%;
-            max-width: 1400px;       /* ← prevents it from stretching too wide on ultra-wide monitors */
+            max-width: 1400px;  /* Prevent ultra-wide stretch */
             margin: 0 auto;
-            padding: 0 4rem;         /* ← horizontal padding inside the section */
         }
-
-        /* For Act I (hero) */
+        
+        /* Hero section should be narrower for elegance */
         .act[data-act="0"] > div {
-            max-width: 1100px;       /* narrower than full width for elegance */
+            max-width: 1100px;
         }
-
-        /* For Act IV (form) */
+        
+        /* Form section */
         .act[data-act="3"] > div {
-            max-width: 800px;        /* form looks better not stretched too wide */
+            max-width: 800px;
+        }
+        
+        /* Mobile refinements */
+        @media (max-width: 768px) {
+            .act {
+                padding: 0 1.5rem;
+            }
+            
+            .card-inner {
+                width: 92vw;
+                height: auto;
+                aspect-ratio: 3/4;
+            }
+            
+            .act-title {
+                font-size: clamp(2.5rem, 12vw, 4rem);
+                margin-bottom: 1.5rem;
+            }
         }
 
         /* 3D Card effect */
@@ -150,22 +168,38 @@
             margin: 0 auto;          /* center it better */
         }
 
+        /* Replace existing .card-face styles with: */
         .card-face {
-            padding: 3.5rem 3rem;    /* ← more top/bottom breathing room than sides */
+            padding: 4rem 3.5rem;  /* More vertical breathing */
         }
-
+        
         .card-face h2 {
-            font-size: 2.8rem;       /* ← slightly smaller than 3rem */
-            line-height: 1;
+            font-size: 2.5rem;  /* Slightly smaller for elegance */
+            line-height: 1.1;
+            letter-spacing: 0.02em;  /* Tighter, more refined */
+            margin-bottom: 2rem;
         }
-
+        
         .card-face p {
-            font-size: 1.3rem;       /* ← a touch larger but with more line-height */
-            line-height: 1.9;
+            font-size: 1.1rem;
+            line-height: 1.9;  /* More generous leading */
+            max-width: 28ch;  /* Optical line length */
+            margin: 0 auto 3rem;
         }
-
-        .card-face > div:last-child {  /* price & composition area */
-            margin-top: 2.5rem;      /* more space before price */
+        
+        /* Price should feel precious, not transactional */
+        .card-face > div:last-child {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.08);  /* Softer divide */
+        }
+        
+        .card-face .price {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;  /* Larger, more confident */
+            font-style: italic;
+            color: #C5A059;
+            letter-spacing: 0.05em;
         }
 
         .product-card:hover .card-inner {
@@ -230,6 +264,40 @@
             touch-action: pan-y;
         }
 
+        :root {
+            --gold-primary: #C5A059;
+            --gold-emphasis: rgba(197, 160, 89, 0.9);
+            --gold-subtle: rgba(197, 160, 89, 0.6);
+            --gold-whisper: rgba(197, 160, 89, 0.15);
+        }
+        
+        /* Replace scattered opacity values with variables */
+        .text-luxury-gold { color: var(--gold-primary); }
+        .border-luxury-gold { border-color: var(--gold-primary); }
+        .hover\:text-luxury-gold:hover { color: var(--gold-emphasis); }
+
+        .btn-primary {
+            padding: 1.5rem 3.5rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: transparent;
+            color: white;
+            font-size: 9px;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(8px);
+        }
+        
+        .btn-primary:hover {
+            border-color: var(--gold-primary);
+            letter-spacing: 0.5em;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
 
         @media (max-width: 768px) {
             .card-inner { width: 90vw; height: 70vh; }
@@ -375,12 +443,31 @@
             
                         <!-- Big CTA button right below -->
                         <div class="pt-16 md:pt-24 pb-12">
-                            <a 
-                                href="collection.html" 
-                                class="inline-block px-20 py-7 bg-luxury-gold text-luxury-dark uppercase text-base md:text-lg tracking-[0.35em] font-medium hover:bg-luxury-gold/85 hover:scale-[1.03] transition-all duration-500 shadow-xl shadow-luxury-gold/20"
-                            >
+                            <a href="collection.html" 
+                               onclick="event.preventDefault(); fadeToCollection(this.href)"
+                               class="inline-block ...">
                                 Enter the Collection →
                             </a>
+                            
+                            <script>
+                            function fadeToCollection(url) {
+                                gsap.to('body', {
+                                    opacity: 0,
+                                    duration: 0.8,
+                                    ease: 'power2.inOut',
+                                    onComplete: () => window.location.href = url
+                                });
+                            }
+                            
+                            // On collection.html load:
+                            window.addEventListener('load', () => {
+                                gsap.from('body', {
+                                    opacity: 0,
+                                    duration: 1.2,
+                                    ease: 'power2.out'
+                                });
+                            });
+                            </script>
                         </div>
             
                         <!-- Subtle hint -->
@@ -422,23 +509,24 @@
             char === ' ' ? ' ' : `<span class="split-char">${char}</span>`
         ).join('');
 
+        // Replace the existing hero animation with:
         gsap.to('.split-char', {
             opacity: 1,
             rotateX: 0,
             y: 0,
-            duration: 1.2,
-            stagger: 0.05,
-            ease: 'power3.out',
-            delay: 0.5
+            duration: 1.8,  // Slower
+            stagger: 0.08,  // More deliberate spacing
+            ease: 'power2.out',  // Gentler curve (was power3)
+            delay: 0.8  // Let page settle first
         });
-
-        // Act numbers fade in
+        
         gsap.to('.act-number', {
             opacity: 1,
             y: 0,
-            duration: 1,
-            delay: 1.2,
-            stagger: 0.2
+            duration: 1.4,
+            delay: 2,  // Sequential, not rushed
+            stagger: 0.3,
+            ease: 'power2.out'
         });
 
         gsap.from(".journey-wrapper + *", {
@@ -513,12 +601,30 @@
         }
 
         // Button hover effects
-        document.querySelectorAll('button').forEach(btn => {
+        // Replace existing button hover script with:
+        document.querySelectorAll('button, a[class*="inline-block"]').forEach(btn => {
             btn.addEventListener('mouseenter', function() {
-                gsap.to(this, { scale: 1.05, duration: 0.3 });
+                gsap.to(this, { 
+                    scale: 1.02,  // Was 1.05, too bouncy
+                    duration: 0.6,  // Slower
+                    ease: 'power2.out'
+                });
+                // Add letter-spacing shift for luxury feel
+                if (this.textContent) {
+                    gsap.to(this, {
+                        letterSpacing: '0.45em',  // Slight expansion
+                        duration: 0.6,
+                        ease: 'power2.out'
+                    });
+                }
             });
             btn.addEventListener('mouseleave', function() {
-                gsap.to(this, { scale: 1, duration: 0.3 });
+                gsap.to(this, { 
+                    scale: 1, 
+                    letterSpacing: '0.35em',  // Return to base
+                    duration: 0.6,
+                    ease: 'power2.out'
+                });
             });
         });
     </script>
