@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@200;300&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     
@@ -22,8 +23,11 @@
                             gold: '#C5A059',
                             dark: '#0A0A0A',
                             paper: '#FDFDFB',
+                            offWhite: '#F5F5F0',
                             stone: '#727272',
+                            canvas: '#F5F2ED',
                             night: '#0F0F0F',
+                            obsidian: '#141414',
                         }
                     },
                     fontFamily: {
@@ -220,6 +224,12 @@
             min-height: 100vh;           /* makes sure the next section doesn't collapse */
             background: #0A0A0A;         /* or your dark background color */
         }
+
+        .act[data-act="3"] {
+            overscroll-behavior: contain;
+            touch-action: pan-y;
+        }
+
 
         @media (max-width: 768px) {
             .card-inner { width: 90vw; height: 70vh; }
@@ -461,15 +471,16 @@
 
         // Scroll to act function
         function scrollToAct(index) {
-            const actWidth = window.innerWidth;
-            const scrollDistance = actWidth * index;
-            
+            const maxScroll = container.scrollWidth - window.innerWidth;
+            const target = (maxScroll / 3) * index;
+        
             gsap.to(window, {
-                scrollTo: { y: scrollDistance, autoKill: false },
+                scrollTo: { y: target, autoKill: false },
                 duration: 1.5,
                 ease: 'power3.inOut'
             });
         }
+
 
         // Magnetic cursor effect on cards (desktop only)
         if (window.innerWidth > 768) {
