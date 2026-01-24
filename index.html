@@ -12,7 +12,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     
     <script>
         tailwind.config = {
@@ -347,6 +346,21 @@
                 padding: 0 1.5rem;
             }
         }
+
+        body.journey-active .act:hover .act-bg,
+        body.journey-active .product-card:hover .card-inner {
+            transform: none;
+            filter: none;
+        }
+
+        html, body {
+            overscroll-behavior: none;
+        }
+
+        #skip-journey{
+            transition: opacity 0.3s;
+            opacity: 0;
+        }
     </style>
 </head>
 <body>
@@ -430,14 +444,7 @@
                         <!-- Act label -->
                         <div class="act-number">ACT IV — FINAL PORTRAIT</div>
                         
-                        <!-- Bottle image accent -->
-                        <div class="mb-8 md:mb-12">
-                            <img 
-                                src="https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&q=80&w=600" 
-                                alt="Imperial Or Bottle" 
-                                class="w-48 md:w-64 mx-auto rounded-lg shadow-2xl opacity-90 object-contain mb-8 md:mb-12"
-                            >
-                        </div>
+                        <img src="https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&q=80&w=1200" class="act-bg" alt="">
                         
                         <!-- Product Card -->
                         <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
@@ -469,14 +476,6 @@
                         <div class="pt-16 md:pt-24 pb-12">
                             
                             <script>
-                            function fadeToCollection(url) {
-                                gsap.to('body', {
-                                    opacity: 0,
-                                    duration: 0.8,
-                                    ease: 'power2.inOut',
-                                    onComplete: () => window.location.href = url
-                                });
-                            }
                             
                             // On collection.html load:
                             window.addEventListener('load', () => {
@@ -499,8 +498,34 @@
         </div>
     </div>
 
+    <!-- Add before closing </body> -->
+    <button id="skip-journey" style="
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 100;
+        background: transparent;
+        border: 1px solid rgba(255,255,255,0.3);
+        color: rgba(255,255,255,0.6);
+        padding: 0.75rem 1.5rem;
+        font-size: 10px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        transition: opacity 0.3s;
+    ">
+        SKIP TO COLLECTION
+    </button>
+    
     <script>
-        gsap.registerPlugin(ScrollTrigger); // Keep for other pages if needed
+    document.getElementById('skip-journey').addEventListener('click', () => {
+        masterTimeline.kill(); // Stop timeline
+        fadeToCollection();    // Jump to redirect
+    });
+    </script>
+
+    <script>
 
         // Motion preference check
         const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -510,7 +535,9 @@
         document.body.classList.add('journey-active');
         
         // Get all acts
-        const acts = document.querySelectorAll('.act');
+        const acts = [...document.querySelectorAll('.act')]
+          .sort((a, b) => a.dataset.act - b.dataset.act);
+
         
         // Hero title split-text (preserve existing effect)
         const title = document.getElementById('hero-title');
@@ -554,6 +581,13 @@
             
             // Hold on act I
             .to({}, { duration: 6 * speedMultiplier })
+
+            .to('#skip-journey', {
+                opacity: 1,
+                duration: 1.2,
+                ease: 'power2.out'
+            })
+
             
             // Fade out act I with subtle drift
             .to(acts[0], {
