@@ -299,31 +299,58 @@
             transform: translateY(0);
         }
 
+        /* Lock viewport during journey */
+        body.journey-active {
+            overflow: hidden;
+            height: 100vh;
+            position: fixed;
+            width: 100%;
+        }
+        
+        /* Acts stack on top of each other */
+        .journey-container {
+            display: block; /* Was flex */
+            width: 100vw;   /* Was 400vw */
+            height: 100vh;
+            position: relative;
+        }
+        
+        .act {
+            position: absolute; /* Was relative */
+            inset: 0;
+            opacity: 0;         /* Start hidden */
+            pointer-events: none;
+        }
+        
+        .act.active {
+            pointer-events: auto;
+        }
+
         @media (max-width: 768px) {
             .card-inner { width: 90vw; height: 70vh; }
             .progress-dots { right: 1rem; gap: 1rem; }
         }
+
+        @media (max-width: 768px) {
+            body.journey-active {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                overflow: hidden;
+            }
+            
+            .act {
+                width: 100vw;
+                height: 100vh;
+                padding: 0 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
-
-    <!-- Fixed Navigation -->
-    <nav style="position: fixed; top: 0; left: 0; right: 0; z-index: 99; padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(10px); background: rgba(10,10,10,0.5);">
-        <a href="#" style="font-family: 'Cinzel', serif; font-size: 1.5rem; letter-spacing: 0.5em; color: #FDFDFB;">LA BRAVIA</a>
-        <div style="display: flex; gap: 2rem; font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;">
-            <button onclick="scrollToAct(0)" style="background: none; border: none; color: rgba(255,255,255,0.6); cursor: pointer; transition: color 0.3s;">Journey</button>
-            <button onclick="scrollToAct(3)" style="background: none; border: none; color: rgba(255,255,255,0.6); cursor: pointer; transition: color 0.3s;">Concierge</button>
-        </div>
-    </nav>
-
-    <!-- Progress Indicator -->
-    <div class="progress-dots">
-        <div class="dot active" onclick="scrollToAct(0)"></div>
-        <div class="dot" onclick="scrollToAct(1)"></div>
-        <div class="dot" onclick="scrollToAct(2)"></div>
-        <div class="dot" onclick="scrollToAct(3)"></div>
-    </div>
-
+    
     <!-- Horizontal Journey Container -->
     <div class="journey-wrapper" style="height: 100vh; overflow: hidden; position: relative;">
         <div class="journey-container">
@@ -336,9 +363,6 @@
                     <div style="margin-bottom: 2rem; font-size: 0.65rem; letter-spacing: 0.8em; color: #C5A059;">OLFACTORY PORTRAIT NO. 01</div>
                     <h1 class="act-title" id="hero-title">SILENCE</h1>
                     <p class="act-description">Fragrance as a vessel for memory. Hand-poured in poetic restraint.</p>
-                    <button onclick="scrollToAct(1)" style="margin-top: 3rem; padding: 1.2rem 3rem; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: white; font-size: 0.65rem; letter-spacing: 0.5em; text-transform: uppercase; cursor: pointer; transition: all 0.6s; backdrop-filter: blur(5px);">
-                        BEGIN JOURNEY
-                    </button>
                 </div>
             </section>
 
@@ -443,11 +467,6 @@
             
                         <!-- Big CTA button right below -->
                         <div class="pt-16 md:pt-24 pb-12">
-                            <a href="collection.html" 
-                               onclick="event.preventDefault(); fadeToCollection(this.href)"
-                               class="inline-block ...">
-                                Enter the Collection →
-                            </a>
                             
                             <script>
                             function fadeToCollection(url) {
@@ -481,152 +500,197 @@
     </div>
 
     <script>
-        gsap.registerPlugin(ScrollTrigger);
+        gsap.registerPlugin(ScrollTrigger); // Keep for other pages if needed
 
-        // Horizontal scroll setup
-        const container = document.querySelector('.journey-container');
-        const wrapper = document.querySelector('.journey-wrapper');
-
-        gsap.to(container, {
-            x: () => -(container.scrollWidth - window.innerWidth),
-            ease: 'none',
-            scrollTrigger: {
-                trigger: wrapper,
-                start: 'top top',
-                end: () => `+=${container.scrollWidth - window.innerWidth}`,
-                scrub: 1,
-                pin: true,
-                anticipatePin: 1,
-                invalidateOnRefresh: true,
-                pinSpacing: true
-            }
-        });
-
-        // Split text animation for hero title
+        // Motion preference check
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const speedMultiplier = prefersReducedMotion ? 0.3 : 1;
+        
+        // Lock body scroll
+        document.body.classList.add('journey-active');
+        
+        // Get all acts
+        const acts = document.querySelectorAll('.act');
+        
+        // Hero title split-text (preserve existing effect)
         const title = document.getElementById('hero-title');
-        const chars = title.textContent.split('');
-        title.innerHTML = chars.map(char => 
-            char === ' ' ? ' ' : `<span class="split-char">${char}</span>`
-        ).join('');
-
-        // Replace the existing hero animation with:
-        gsap.to('.split-char', {
-            opacity: 1,
-            rotateX: 0,
-            y: 0,
-            duration: 1.8,  // Slower
-            stagger: 0.08,  // More deliberate spacing
-            ease: 'power2.out',  // Gentler curve (was power3)
-            delay: 0.8  // Let page settle first
-        });
+        if (title) {
+            const chars = title.textContent.split('');
+            title.innerHTML = chars.map(char => 
+                char === ' ' ? ' ' : `<span class="split-char">${char}</span>`
+            ).join('');
+        }
         
-        gsap.to('.act-number', {
-            opacity: 1,
-            y: 0,
-            duration: 1.4,
-            delay: 2,  // Sequential, not rushed
-            stagger: 0.3,
-            ease: 'power2.out'
-        });
-
-        gsap.from(".journey-wrapper + *", {
-            opacity: 0,
-            y: 60,
-            duration: 1.2,
-            ease: "power3.out",
-            scrollTrigger: {
-                trigger: ".journey-wrapper",
-                start: "top top",
-                end: "bottom top",
-                toggleActions: "play none none reverse"
+        // Create master timeline
+        const masterTimeline = gsap.timeline({
+            defaults: { ease: 'power2.inOut' },
+            onComplete: () => {
+                // Redirect after journey completes
+                fadeToCollection();
             }
         });
-
-        // Progress dots update
-        ScrollTrigger.create({
-            trigger: wrapper,
-            start: 'top top',
-            end: () => `+=${container.scrollWidth - window.innerWidth}`,
-            onUpdate: (self) => {
-                const progress = self.progress;
-                const actIndex = Math.floor(progress * 4);
-                
-                document.querySelectorAll('.dot').forEach((dot, i) => {
-                    dot.classList.toggle('active', i === actIndex);
-                });
-            }
-        });
-
-        // Scroll to act function
-        function scrollToAct(index) {
-            const maxScroll = container.scrollWidth - window.innerWidth;
-            const target = (maxScroll / 3) * index;
         
-            gsap.to(window, {
-                scrollTo: { y: target, autoKill: false },
+        // ACT I — Hero / Entrance
+        masterTimeline
+            // Fade in act
+            .set(acts[0], { opacity: 1, zIndex: 10 })
+            
+            // Animate hero title (split chars)
+            .to('.split-char', {
+                opacity: 1,
+                rotateX: 0,
+                y: 0,
+                duration: 1.8 * speedMultiplier,
+                stagger: 0.08 * speedMultiplier,
+                ease: 'power2.out'
+            }, 0.5 * speedMultiplier)
+            
+            // Fade in act number
+            .to(acts[0].querySelector('.act-number'), {
+                opacity: 1,
+                y: 0,
+                duration: 1.4 * speedMultiplier
+            }, 1.5 * speedMultiplier)
+            
+            // Hold on act I
+            .to({}, { duration: 6 * speedMultiplier })
+            
+            // Fade out act I with subtle drift
+            .to(acts[0], {
+                opacity: 0,
+                x: -50,
+                duration: 2 * speedMultiplier
+            });
+        
+        // ACT II — Noir Éclat
+        masterTimeline
+            // Fade in act II
+            .set(acts[1], { opacity: 0, x: 50, zIndex: 10 })
+            .to(acts[1], {
+                opacity: 1,
+                x: 0,
+                duration: 2 * speedMultiplier
+            })
+            
+            // Fade in act number
+            .to(acts[1].querySelector('.act-number'), {
+                opacity: 1,
+                y: 0,
+                duration: 1.4 * speedMultiplier
+            }, '<0.5')
+            
+            // Subtle card float effect
+            .to(acts[1].querySelector('.card-inner'), {
+                y: -10,
+                duration: 3 * speedMultiplier,
+                ease: 'sine.inOut',
+                repeat: 1,
+                yoyo: true
+            }, '<')
+            
+            // Hold on act II
+            .to({}, { duration: 8 * speedMultiplier })
+            
+            // Fade out
+            .to(acts[1], {
+                opacity: 0,
+                x: -50,
+                duration: 2 * speedMultiplier
+            });
+        
+        // ACT III — Azure Bloom
+        masterTimeline
+            .set(acts[2], { opacity: 0, x: 50, zIndex: 10 })
+            .to(acts[2], {
+                opacity: 1,
+                x: 0,
+                duration: 2 * speedMultiplier
+            })
+            
+            .to(acts[2].querySelector('.act-number'), {
+                opacity: 1,
+                y: 0,
+                duration: 1.4 * speedMultiplier
+            }, '<0.5')
+            
+            .to(acts[2].querySelector('.card-inner'), {
+                y: -10,
+                duration: 3 * speedMultiplier,
+                ease: 'sine.inOut',
+                repeat: 1,
+                yoyo: true
+            }, '<')
+            
+            .to({}, { duration: 8 * speedMultiplier })
+            
+            .to(acts[2], {
+                opacity: 0,
+                x: -50,
+                duration: 2 * speedMultiplier
+            });
+        
+        // ACT IV — Imperial Or + Finale
+        masterTimeline
+            .set(acts[3], { opacity: 0, x: 50, zIndex: 10 })
+            .to(acts[3], {
+                opacity: 1,
+                x: 0,
+                duration: 2 * speedMultiplier
+            })
+            
+            .to(acts[3].querySelector('.act-number'), {
+                opacity: 1,
+                y: 0,
+                duration: 1.4 * speedMultiplier
+            }, '<0.5')
+            
+            // Hold longer on final act
+            .to({}, { duration: 10 * speedMultiplier })
+            
+            // Fade entire act to black (don't drift out)
+            .to(acts[3], {
+                opacity: 0,
+                duration: 3 * speedMultiplier,
+                ease: 'power2.in'
+            });
+        
+        // Redirect function (triggered by timeline onComplete)
+        function fadeToCollection() {
+            // Create full-screen black overlay
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                inset: 0;
+                background: #0A0A0A;
+                z-index: 9999;
+                opacity: 0;
+            `;
+            document.body.appendChild(overlay);
+            
+            // Fade overlay in
+            gsap.to(overlay, {
+                opacity: 1,
                 duration: 1.5,
-                ease: 'power3.inOut'
-            });
-        }
-
-
-        // Magnetic cursor effect on cards (desktop only)
-        if (window.innerWidth > 768) {
-            document.querySelectorAll('.magnetic-area').forEach(area => {
-                const card = area.querySelector('.card-inner');
-                
-                area.addEventListener('mousemove', (e) => {
-                    const rect = area.getBoundingClientRect();
-                    const x = e.clientX - rect.left - rect.width / 2;
-                    const y = e.clientY - rect.top - rect.height / 2;
-                    
-                    gsap.to(card, {
-                        rotateY: x / 20,
-                        rotateX: -y / 20,
-                        transformPerspective: 1000,
-                        duration: 0.5,
-                        ease: 'power2.out'
-                    });
-                });
-                
-                area.addEventListener('mouseleave', () => {
-                    gsap.to(card, {
-                        rotateY: 0,
-                        rotateX: 0,
-                        duration: 0.8,
-                        ease: 'elastic.out(1, 0.3)'
-                    });
-                });
-            });
-        }
-
-        // Button hover effects
-        // Replace existing button hover script with:
-        document.querySelectorAll('button, a[class*="inline-block"]').forEach(btn => {
-            btn.addEventListener('mouseenter', function() {
-                gsap.to(this, { 
-                    scale: 1.02,  // Was 1.05, too bouncy
-                    duration: 0.6,  // Slower
-                    ease: 'power2.out'
-                });
-                // Add letter-spacing shift for luxury feel
-                if (this.textContent) {
-                    gsap.to(this, {
-                        letterSpacing: '0.45em',  // Slight expansion
-                        duration: 0.6,
-                        ease: 'power2.out'
-                    });
+                ease: 'power2.inOut',
+                onComplete: () => {
+                    // Redirect after fade completes
+                    window.location.href = 'collection.html';
                 }
             });
-            btn.addEventListener('mouseleave', function() {
-                gsap.to(this, { 
-                    scale: 1, 
-                    letterSpacing: '0.35em',  // Return to base
-                    duration: 0.6,
-                    ease: 'power2.out'
-                });
-            });
-        });
+        }
+        
+        // Optional: Prevent any accidental scroll attempts
+        window.addEventListener('wheel', (e) => {
+            if (document.body.classList.contains('journey-active')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        window.addEventListener('touchmove', (e) => {
+            if (document.body.classList.contains('journey-active')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
