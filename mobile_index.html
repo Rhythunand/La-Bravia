@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>La Bravia | Olfactory Portraits</title>
+    <meta name="description" content="Artisanal fragrances crafted with poetic restraint. Silence is the ultimate luxury.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        luxury: {
+                            gold: '#C5A059',
+                            dark: '#0A0A0A',
+                            paper: '#FDFDFB',
+                            offWhite: '#F5F5F0',
+                            stone: '#727272',
+                            canvas: '#F5F2ED',
+                            night: '#0F0F0F',
+                            obsidian: '#141414',
+                        }
+                    },
+                    fontFamily: {
+                        display: ['Cinzel', 'serif'],
+                        serif: ['Cormorant Garamond', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    letterSpacing: {
+                        luxury: '0.35em',
+                        hero: '0.6em',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0A0A0A;
+            color: #FDFDFB;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+        }
+
+        /* Film Grain Overlay */
+        body::after {
+            content: "";
+            position: fixed;
+            top: -150%; 
+            left: -150%; 
+            width: 300%; 
+            height: 300%;
+            background-image: url("https://upload.wikimedia.org/wikipedia/commons/5/5c/Image_with_noise_example.png");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 9999;
+            animation: grain 8s steps(10) infinite;
+        }
+        
+        @keyframes grain {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-5%, -10%); }
+            30% { transform: translate(-15%, 5%); }
+            50% { transform: translate(-5%, 15%); }
+            70% { transform: translate(0, 10%); }
+            90% { transform: translate(-10%, 5%); }
+        }
+
+        /* Acts container */
+        .acts-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .act {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .act-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.4;
+            filter: grayscale(1);
+        }
+
+        .act-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 2rem 1.5rem;
+            max-width: 90vw;
+        }
+
+        .act-number {
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.5em;
+            color: #C5A059;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+        }
+
+        .split-char {
+            display: inline-block;
+            opacity: 0;
+            transform: rotateX(-90deg) translateY(50px);
+        }
+
+        /* Product card styling */
+        .product-card {
+            background: rgba(10,10,10,0.85);
+            border: 1px solid rgba(197,160,89,0.15);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem 2rem;
+            max-width: 85vw;
+            margin: 0 auto;
+        }
+
+        .category-tag {
+            font-size: 0.6rem;
+            letter-spacing: 0.5em;
+            color: #C5A059;
+            margin-bottom: 1rem;
+        }
+
+        .product-name {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .product-description {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.75);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .composition-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.3em;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 0.5rem;
+        }
+
+        .composition-text {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 1.5rem;
+        }
+
+        .price {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-style: italic;
+            color: #C5A059;
+        }
+
+        .divider {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Skip button */
+        #skip-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 1.5rem;
+            z-index: 100;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: rgba(255,255,255,0.6);
+            padding: 0.75rem 1.25rem;
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        #skip-btn:active {
+            transform: scale(0.95);
+            border-color: #C5A059;
+            color: #C5A059;
+        }
+
+        /* Hero specific styles */
+        .hero-title {
+            font-size: clamp(3rem, 15vw, 5rem);
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.5em;
+            line-height: 0.85;
+        }
+
+        .hero-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.6;
+        }
+
+        .hero-tag {
+            font-size: 0.6rem;
+            letter-spacing: 0.8em;
+            color: #C5A059;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="acts-container">
+        
+        <!-- ACT I - Hero/Entrance -->
+        <section class="act act-1" data-act="0">
+            <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=2000" 
+                 class="act-bg" 
+                 alt="Ethereal scent visualization"
+                 loading="eager">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-luxury-night"></div>
+            
+            <div class="act-content">
+                <div class="act-number">ACT I — THE ENTRANCE</div>
+                <p class="hero-tag">OLFACTORY PORTRAIT NO. 01</p>
+                <h1 class="hero-title font-display text-white" id="hero-title">SILENCE</h1>
+                <p class="hero-subtitle max-w-sm mx-auto">
+                    Fragrance as a vessel for memory.<br>Hand-poured in poetic restraint.
+                </p>
+            </div>
+        </section>
+
+        <!-- ACT II - Noir Éclat -->
+        <section class="act act-2" data-act="1">
+            <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=1200" 
+                 class="act-bg" 
+                 alt="Noir Éclat"
+                 loading="lazy">
+            
+            <div class="act-content">
+                <div class="act-number">ACT II — SHADOW</div>
+                
+                <div class="product-card">
+                    <p class="category-tag">ORIENTAL / SHADOW</p>
+                    <h2 class="product-name">NOIR ÉCLAT</h2>
+                    <p class="product-description">
+                        A dialogue between smoke and light. This composition rests on the skin like a shadow.
+                    </p>
+                    
+                    <div class="divider">
+                        <p class="composition-label">COMPOSITION</p>
+                        <p class="composition-text">Cardamom, Oud, Vetiver</p>
+                        <p class="price">€285</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACT III - Azure Bloom -->
+        <section class="act act-3" data-act="2">
+            <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1200" 
+                 class="act-bg" 
+                 alt="Azure Bloom"
+                 loading="lazy">
+            
+            <div class="act-content">
+                <div class="act-number">ACT III — ETHEREAL</div>
+                
+                <div class="product-card">
+                    <p class="category-tag">FLORAL / ETHEREAL</p>
+                    <h2 class="product-name">AZURE BLOOM</h2>
+                    <p class="product-description">
+                        The stillness of a Mediterranean dawn. Soft, architectural, crystalline.
+                    </p>
+                    
+                    <div class="divider">
+                        <p class="composition-label">COMPOSITION</p>
+                        <p class="composition-text">Bergamot, Jasmine, Salt</p>
+                        <p class="price">€195</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACT IV - Imperial Or -->
+        <section class="act act-4" data-act="3">
+            <img src="https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&q=80&w=1200" 
+                 class="act-bg" 
+                 alt="Imperial Or"
+                 loading="lazy">
+            
+            <div class="act-content">
+                <div class="act-number">ACT IV — FINAL PORTRAIT</div>
+                
+                <div class="product-card">
+                    <p class="category-tag">GOURMAND / SCULPTURAL</p>
+                    <h2 class="product-name">IMPERIAL OR</h2>
+                    <p class="product-description">
+                        Radiant warmth. The weight of gold. An enduring silhouette.
+                    </p>
+                    
+                    <div class="divider">
+                        <p class="composition-label">COMPOSITION</p>
+                        <p class="composition-text">Saffron, Honey, Vanilla, Sandalwood</p>
+                        <p class="price">€340</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+    </div>
+
+    <!-- Skip Button -->
+    <button id="skip-btn">SKIP TO COLLECTION</button>
+
+    <script>
+        // Motion preference check
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const speedMultiplier = prefersReducedMotion ? 0.5 : 1;
+
+        // Get all acts
+        const acts = [...document.querySelectorAll('.act')]
+            .sort((a, b) => a.dataset.act - b.dataset.act);
+
+        // Hero title split-text animation
+        const title = document.getElementById('hero-title');
+        if (title) {
+            const chars = title.textContent.split('');
+            title.innerHTML = chars.map(char => 
+                char === ' ' ? ' ' : `<span class="split-char">${char}</span>`
+            ).join('');
+        }
+
+        // Create master timeline
+        const masterTimeline = gsap.timeline({
+            defaults: { ease: 'power2.inOut' },
+            onComplete: fadeToCollection
+        });
+
+        // ACT I — Hero (3 seconds visible)
+        masterTimeline
+            .set(acts[0], { opacity: 1, zIndex: 10 })
+            
+            // Animate hero title split chars
+            .to('.split-char', {
+                opacity: 1,
+                rotateX: 0,
+                y: 0,
+                duration: 1.2 * speedMultiplier,
+                stagger: 0.05 * speedMultiplier,
+                ease: 'power2.out'
+            }, 0.3)
+            
+            // Fade in act number
+            .to(acts[0].querySelector('.act-number'), {
+                opacity: 1,
+                y: 0,
+                duration: 1 * speedMultiplier
+            }, 1)
+            
+            // Show skip button
+            .to('#skip-btn', {
+                opacity: 1,
+                duration: 0.8
+            }, 1.5)
+            
+            // Hold for 3 seconds total
+            .to({}, { duration: 3 * speedMultiplier })
+            
+            // Fade out
+            .to(acts[0], {
+                opacity: 0,
+                duration: 1 * speedMultiplier
+            });
+
+        // ACT II — Noir Éclat (3 seconds visible)
+        masterTimeline
+            .set(acts[1], { opacity: 0, zIndex: 10 })
+            .to(acts[1], {
+                opacity: 1,
+                duration: 1 * speedMultiplier
+            }, '<0.5')
+            
+            .to(acts[1].querySelector('.act-number'), {
+                opacity: 1,
+                y: 0,
+                duration: 1 * speedMultiplier
+            }, '<0.3')
+            
+            // Hold for 3 seconds
+            .to({}, { duration: 3 * speedMultiplier })
+            
+            .to(acts[1], {
+                opacity: 0,
+                duration: 1 * speedMultiplier
+            });
+
+        // ACT III — Azure Bloom (3 seconds visible)
+        masterTimeline
+            .set(acts[2], { opacity: 0, zIndex: 10 })
+            .to(acts[2], {
+                opacity: 1,
+                duration: 1 * speedMultiplier
+            }, '<0.5')
+            
+            .to(acts[2].querySelector('.act-number'), {
+                opacity: 1,
+                y: 0,
+                duration: 1 * speedMultiplier
+            }, '<0.3')
+            
+            // Hold for 3 seconds
+            .to({}, { duration: 3 * speedMultiplier })
+            
+            .to(acts[2], {
+                opacity: 0,
+                duration: 1 * speedMultiplier
+            });
+
+        // ACT IV — Imperial Or (3 seconds visible)
+        masterTimeline
+            .set(acts[3], { opacity: 0, zIndex: 10 })
+            .to(acts[3], {
+                opacity: 1,
+                duration: 1 * speedMultiplier
+            }, '<0.5')
+            
+            .to(acts[3].querySelector('.act-number'), {
+                opacity: 1,
+                y: 0,
+                duration: 1 * speedMultiplier
+            }, '<0.3')
+            
+            // Hold for 3 seconds
+            .to({}, { duration: 3 * speedMultiplier })
+            
+            // Final fade out
+            .to(acts[3], {
+                opacity: 0,
+                duration: 1.5 * speedMultiplier,
+                ease: 'power2.in'
+            });
+
+        // Redirect function (called after timeline completes)
+        function fadeToCollection() {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                inset: 0;
+                background: #0A0A0A;
+                z-index: 9999;
+                opacity: 0;
+            `;
+            document.body.appendChild(overlay);
+            
+            gsap.to(overlay, {
+                opacity: 1,
+                duration: 1.2,
+                ease: 'power2.inOut',
+                onComplete: () => {
+                    window.location.href = 'collection.html';
+                }
+            });
+        }
+
+        // Skip button functionality
+        document.getElementById('skip-btn').addEventListener('click', () => {
+            masterTimeline.kill();
+            fadeToCollection();
+        });
+
+        // Prevent accidental scroll
+        window.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
+        window.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+    </script>
+</body>
+</html>
