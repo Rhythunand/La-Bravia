@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
@@ -361,6 +362,11 @@
             transition: opacity 0.3s;
             opacity: 0;
         }
+
+        #skip-journey {
+            line-height: 1;
+        }
+
     </style>
 </head>
 <body>
@@ -549,142 +555,128 @@
         }
         
         // Create master timeline
+        // ... existing setup code ...
+
+        // Create master timeline
         const masterTimeline = gsap.timeline({
             defaults: { ease: 'power2.inOut' },
             onComplete: () => {
-                // Redirect after journey completes
-                fadeToCollection();
+                fadeToCollection(); // Redirects when finished
             }
         });
-        
+
         // ACT I — Hero / Entrance
         masterTimeline
-            // Fade in act
             .set(acts[0], { opacity: 1, zIndex: 10 })
-            
-            // Animate hero title (split chars)
             .to('.split-char', {
                 opacity: 1,
                 rotateX: 0,
                 y: 0,
-                duration: 1.8 * speedMultiplier,
-                stagger: 0.08 * speedMultiplier,
+                duration: 1.5 * speedMultiplier, // Slightly faster text reveal
+                stagger: 0.05 * speedMultiplier,
                 ease: 'power2.out'
             }, 0.5 * speedMultiplier)
-            
-            // Fade in act number
             .to(acts[0].querySelector('.act-number'), {
                 opacity: 1,
                 y: 0,
-                duration: 1.4 * speedMultiplier
-            }, 1.5 * speedMultiplier)
+                duration: 1.0 * speedMultiplier
+            }, 1.0 * speedMultiplier)
             
-            // Hold on act I
-            .to({}, { duration: 6 * speedMultiplier })
+            // --- UPDATED: HOLD FOR 3 SECONDS ---
+            .to({}, { duration: 3 * speedMultiplier }) 
 
             .to('#skip-journey', {
                 opacity: 1,
-                duration: 1.2,
+                duration: 0.5,
                 ease: 'power2.out'
-            })
+            }, "<") // Show skip button earlier
 
-            
-            // Fade out act I with subtle drift
             .to(acts[0], {
                 opacity: 0,
                 x: -50,
-                duration: 2 * speedMultiplier
+                duration: 1.5 * speedMultiplier // Faster transition out
             });
-        
+
         // ACT II — Noir Éclat
         masterTimeline
-            // Fade in act II
             .set(acts[1], { opacity: 0, x: 50, zIndex: 10 })
             .to(acts[1], {
                 opacity: 1,
                 x: 0,
-                duration: 2 * speedMultiplier
+                duration: 1.5 * speedMultiplier
             })
-            
-            // Fade in act number
             .to(acts[1].querySelector('.act-number'), {
                 opacity: 1,
                 y: 0,
-                duration: 1.4 * speedMultiplier
-            }, '<0.5')
-            
-            // Subtle card float effect
+                duration: 1.0 * speedMultiplier
+            }, '<0.3')
             .to(acts[1].querySelector('.card-inner'), {
                 y: -10,
-                duration: 3 * speedMultiplier,
+                duration: 3 * speedMultiplier, // Match the hold duration
                 ease: 'sine.inOut',
-                repeat: 1,
+                repeat: 0, // Don't repeat, just float once matches the shorter time
                 yoyo: true
             }, '<')
             
-            // Hold on act II
-            .to({}, { duration: 8 * speedMultiplier })
+            // --- UPDATED: HOLD FOR 3 SECONDS ---
+            .to({}, { duration: 3 * speedMultiplier })
             
-            // Fade out
             .to(acts[1], {
                 opacity: 0,
                 x: -50,
-                duration: 2 * speedMultiplier
+                duration: 1.5 * speedMultiplier
             });
-        
+
         // ACT III — Azure Bloom
         masterTimeline
             .set(acts[2], { opacity: 0, x: 50, zIndex: 10 })
             .to(acts[2], {
                 opacity: 1,
                 x: 0,
-                duration: 2 * speedMultiplier
+                duration: 1.5 * speedMultiplier
             })
-            
             .to(acts[2].querySelector('.act-number'), {
                 opacity: 1,
                 y: 0,
-                duration: 1.4 * speedMultiplier
-            }, '<0.5')
-            
+                duration: 1.0 * speedMultiplier
+            }, '<0.3')
             .to(acts[2].querySelector('.card-inner'), {
                 y: -10,
                 duration: 3 * speedMultiplier,
                 ease: 'sine.inOut',
-                repeat: 1,
+                repeat: 0,
                 yoyo: true
             }, '<')
             
-            .to({}, { duration: 8 * speedMultiplier })
+            // --- UPDATED: HOLD FOR 3 SECONDS ---
+            .to({}, { duration: 3 * speedMultiplier })
             
             .to(acts[2], {
                 opacity: 0,
                 x: -50,
-                duration: 2 * speedMultiplier
+                duration: 1.5 * speedMultiplier
             });
-        
+
         // ACT IV — Imperial Or + Finale
         masterTimeline
             .set(acts[3], { opacity: 0, x: 50, zIndex: 10 })
             .to(acts[3], {
                 opacity: 1,
                 x: 0,
-                duration: 2 * speedMultiplier
+                duration: 1.5 * speedMultiplier
             })
-            
             .to(acts[3].querySelector('.act-number'), {
                 opacity: 1,
                 y: 0,
-                duration: 1.4 * speedMultiplier
-            }, '<0.5')
+                duration: 1.0 * speedMultiplier
+            }, '<0.3')
             
-            // Hold longer on final act
-            .to({}, { duration: 10 * speedMultiplier })
+            // --- UPDATED: HOLD FOR 3 SECONDS ---
+            .to({}, { duration: 3 * speedMultiplier })
             
-            // Fade entire act to black (don't drift out)
             .to(acts[3], {
                 opacity: 0,
-                duration: 3 * speedMultiplier,
+                duration: 1.5 * speedMultiplier,
                 ease: 'power2.in'
             });
         
